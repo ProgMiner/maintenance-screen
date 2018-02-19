@@ -22,13 +22,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-namespace MaintenanceScreen;
+namespace MaintenanceScreen\Application;
+
+use MaintenanceScreen\MaintenanceScreen;
 
 /**
- * Main class
+ * Boot function
  *
  * @author ProgMiner
  */
-class MaintenanceScreen {
-    //
+function boot() {
+    if (!defined('__ROOT__')) {
+        die('__ROOT__ is not defined');
+    }
+
+    $maintenanceScreen = new MaintenanceScreen('config.yml', [__ROOT__.'app/config']);
 }

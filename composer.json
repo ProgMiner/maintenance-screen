@@ -18,8 +18,11 @@
     },
     "autoload": {
         "psr-4": {
-            "MaintenanceScreen\\": "src"
-        }
+            "MaintenanceScreen\\": "lib"
+        },
+        "files": [
+            "app/functions/boot.php"
+        ]
     },
     "config": {
         "optimize-autoloader": true

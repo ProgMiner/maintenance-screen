@@ -22,17 +22,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-namespace MaintenanceScreen;
+namespace MaintenanceScreen\Configurations;
 
-use Symfony\Components\Config\Definition\ConfigurationInterface;
-use Symfony\Components\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
 /**
  * ConfigurationInterface implementation for main configuration
  *
  * @author ProgMiner
  */
-class Configuration extends ConfigurationInterface {
+class MainConfiguration implements ConfigurationInterface {
 
     public function getConfigTreeBuilder() {
         $treeBuilder = new TreeBuilder();
@@ -55,11 +55,10 @@ class Configuration extends ConfigurationInterface {
     
                 booleanNode('prefer_default')->
                     defaultFalse()->
-                    cannotBeEmpty()->
                 end()->
     
                 append(
-                    new TranslationConnfiguration()->
+                    (new TranslationConfiguration())->
                     makeRoot()
                 )->
 
