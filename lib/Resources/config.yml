@@ -1,0 +1,5 @@
+maintenance_screen:
+    template_name: Default
+    default_language: en-US
+    prefer_default: false
+    translations: []

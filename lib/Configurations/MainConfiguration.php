@@ -44,19 +44,17 @@ class MainConfiguration implements ConfigurationInterface {
                 scalarNode('template_name')->
                     defaultValue('default')->
                     cannotBeEmpty()->
-                    isRequired()->
                 end()->
-    
+
                 scalarNode('default_language')->
                     defaultValue('en-US')->
                     cannotBeEmpty()->
-                    isRequired()->
                 end()->
-    
+
                 booleanNode('prefer_default')->
                     defaultFalse()->
                 end()->
-    
+
                 append(
                     (new TranslationConfiguration())->
                     makeRoot()

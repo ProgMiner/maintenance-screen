@@ -49,19 +49,22 @@ class TranslationConfiguration implements ConfigurationInterface {
 
         $rootNode->
             fixXmlConfig('translation')->
-            children()->
+            arrayPrototype()->
+                children()->
 
-                scalarNode('language')->
-                    defaultValue('default')->
-                    cannotBeEmpty()->
-                    isRequired()->
+                    scalarNode('language')->
+                        defaultValue('default')->
+                        cannotBeEmpty()->
+                        isRequired()->
+                    end()->
+
+                    scalarNode('content')->
+                        cannotBeEmpty()->
+                        isRequired()->
+                    end()->
+
                 end()->
 
-                scalarNode('content')->
-                    cannotBeEmpty()->
-                    isRequired()->
-                end()->
-    
             end();
 
         return $rootNode;

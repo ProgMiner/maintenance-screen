@@ -36,5 +36,9 @@ function boot() {
         die('__ROOT__ is not defined');
     }
 
-    $maintenanceScreen = new MaintenanceScreen('config.yml', [__ROOT__.'app/config']);
+    try {
+        $maintenanceScreen = new MaintenanceScreen('config.yml', [__ROOT__.'app/config']);
+    } catch (Throwable $e) {
+        throw new \RuntimeException('Invalid config file', 0, $e);
+    }
 }

@@ -28,6 +28,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderResolver;
 use Symfony\Component\Config\Loader\DelegatingLoader;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
 
 /**
  * Main class
@@ -37,7 +38,7 @@ use Symfony\Component\Config\Definition\Processor;
 class MaintenanceScreen {
 
     public function __construct(string $configFile, array $additionalConfigDirs = [], array $additionalLoaders = []) {
-        $configDirs = ['Resources'];
+        $configDirs = [__DIR__.'/Resources'];
         $configDirs = array_merge($additionalConfigDirs, $configDirs);
 
         $fileLocator = new FileLocator($configDirs);
@@ -50,9 +51,14 @@ class MaintenanceScreen {
         $loaderResolver = new LoaderResolver($loaders);
         $delegatingLoader = new DelegatingLoader($loaderResolver);
 
-        $mainConfig = $delegatingLoader->load($fileLocator->locate($configFile));
+        try {
+            $mainConfig = $delegatingLoader->load($fileLocator->locate($configFile));
+        } catch (FileLocatorFileNotFoundException $e) {
+            throw new \RuntimeException('Config file is not exists', 0, $e);
+        }
+
         if (is_null($mainConfig)) {
-            $mainConfig = [];
+            throw new \RuntimeException('Config file is empty');
         }
 
         $processor = new Processor();
@@ -65,6 +71,7 @@ class MaintenanceScreen {
                 $mainConfig
         );
 
-        print_r($menuConfig);
+        header('Content-Type: text/plain');
+        var_dump($mainConfig);
     }
 }
