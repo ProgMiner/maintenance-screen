@@ -39,16 +39,33 @@ class TranslationsConfiguration implements ConfigurationInterface {
         $rootNode = $treeBuilder->root('translations');
 
         $rootNode->
-            fixXmlConfig('translation')->
             children()->
 
                 scalarNode('default')->
-                    defaultValue('This site is currently in maintenance')->
+                    isRequired()->
                 end()->
 
-            end()->
+                booleanNode('last')->
+                    defaultFalse()->
+                end()->
 
-            scalarPrototype()->
+                arrayNode('translations')->
+                    fixXmlConfig('translation')->
+                    useAttributeAsKey('language')->
+
+                    arrayPrototype()->
+                        children()->
+
+                            scalarNode('text')->
+                                isRequired()->
+                            end()->
+
+                        end()->
+
+                    end()->
+
+                end()->
+
             end();
 
         return $treeBuilder;

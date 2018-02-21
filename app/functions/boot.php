@@ -37,7 +37,10 @@ function boot() {
     }
 
     try {
-        $maintenanceScreen = new MaintenanceScreen('config.yml', [__ROOT__.'app/config']);
+        $maintenanceScreen = MaintenanceScreen::makeUsing('config.yml', [__ROOT__.'app/config']);
+
+        header('Content-Type: text/plain');
+        print_r($maintenanceScreen);
     } catch (Throwable $e) {
         throw new \RuntimeException('Invalid config file', 0, $e);
     }

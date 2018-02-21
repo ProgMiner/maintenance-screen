@@ -28,7 +28,6 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderResolver;
 use Symfony\Component\Config\Loader\DelegatingLoader;
 use Symfony\Component\Config\Definition\Processor;
-use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
 
 use MaintenanceScreen\Configurations\MainConfiguration;
 use MaintenanceScreen\Configurations\TranslationsConfiguration;
@@ -44,46 +43,34 @@ class MaintenanceScreen {
      * @var array $config       Configuration
      * @var array $translations Translations
      */
-    protected $config = null, $translations = null;
+    protected $config, $translations;
 
-    /**
-     * @var ConfigurationLoader Configuration loader
-     */
-    protected $configurationLoader;
-
-    public function __construct(string $configFile, array $additionalConfigDirs = [], array $additionalLoaders = []) {
-        $this->configurationLoader = new ConfigurationLoader(
-            $additionalConfigDirs,
-            $additionalLoaders
-        );
-
-        header('Content-Type: text/plain');
-        var_dump($this->getConfig($configFile));
+    public function __construct(array $config, array $translations) {
+        $this->config = $config;
+        $this->translations = $translations;
     }
 
-    public function getConfig(string $configFile = 'config.yml'): array {
-        if (!is_null($this->config)) {
-            return $this->config;
-        }
-
-        $this->config = $this->configurationLoader->loadFile(
-            $configFile,
-            new MainConfiguration()
+    public static function makeUsing(string $configFile, array $configDirs = [], array $loaders = []) {
+        $configurationLoader = new ConfigurationLoader(
+            $configDirs,
+            $loaders
         );
 
-        return $this->config;
-    }
-
-    public function getTranslations(): array {
-        if (!is_null($this->translations)) {
-            return $this->translations;
-        }
-
-        $this->config = $this->configurationLoader->loadFile(
+        $translations = $configurationLoader->loadFileWhile(
             'translations.yml',
-            new TranslationsConfiguration()
+            new TranslationsConfiguration(),
+            function($file, $config) { return !$config['last']; }
         );
 
-        return $this->config;
+        unset($translations['last']);
+        foreach ($translations['translations'] as $key => $node) {
+            unset($translations['translations'][$key]);
+            $translations['translations'][$key] = $node['text'];
+        }
+
+        return new static(
+            $configurationLoader->loadFile($configFile, new MainConfiguration()),
+            $translations
+        );
     }
 }
