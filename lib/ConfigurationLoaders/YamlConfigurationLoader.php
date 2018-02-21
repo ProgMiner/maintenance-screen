@@ -25,6 +25,7 @@ SOFTWARE. */
 namespace MaintenanceScreen\ConfigurationLoaders;
 
 use Symfony\Component\Config\Loader\FileLoader;
+
 use Symfony\Component\Yaml\Yaml;
 
 /**

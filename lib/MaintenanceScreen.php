@@ -24,11 +24,6 @@ SOFTWARE. */
 
 namespace MaintenanceScreen;
 
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\Config\Loader\LoaderResolver;
-use Symfony\Component\Config\Loader\DelegatingLoader;
-use Symfony\Component\Config\Definition\Processor;
-
 use MaintenanceScreen\Configurations\MainConfiguration;
 use MaintenanceScreen\Configurations\TranslationsConfiguration;
 

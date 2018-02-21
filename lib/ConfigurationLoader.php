@@ -25,10 +25,13 @@ SOFTWARE. */
 namespace MaintenanceScreen;
 
 use Symfony\Component\Config\FileLocator;
+
 use Symfony\Component\Config\Loader\LoaderResolver;
 use Symfony\Component\Config\Loader\DelegatingLoader;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
+
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Exception\Exception as ConfigException;
 
 use MaintenanceScreen\ConfigurationLoaders\YamlConfigurationLoader;
 
@@ -111,24 +114,26 @@ class ConfigurationLoader {
         $loader = $this->resolver->resolve($files[0]);
 
         $configs = [];
+        $processedConfig = [];
         foreach ($files as $file) {
             $config = $loader->load($file);
 
-            $processedConfig = $this->processor->processConfiguration(
-                $configuration,
-                [$config]
-            );
-
             array_unshift($configs, $config);
 
-            if (!$func($file, $processedConfig, $configs)) {
-                break;
+            try {
+                $processedConfig = $this->processor->processConfiguration(
+                    $configuration,
+                    $configs
+                );
+
+                if (!$func($file, $processedConfig, $configs)) {
+                    break;
+                }
+            } catch (ConfigException $e) {
+                continue;
             }
         }
 
-        return $this->processor->processConfiguration(
-            $configuration,
-            $configs
-        );
+        return $processedConfig;
     }
 }
