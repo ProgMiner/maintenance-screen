@@ -32,41 +32,26 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
  *
  * @author ProgMiner
  */
-class TranslationConfiguration implements ConfigurationInterface {
+class TranslationsConfiguration implements ConfigurationInterface {
 
     public function getConfigTreeBuilder() {
         $treeBuilder = new TreeBuilder();
-        $this->makeRoot($treeBuilder->root('translations'));
+        $rootNode = $treeBuilder->root('translations');
+
+        $rootNode->
+            fixXmlConfig('translation')->
+            children()->
+
+                scalarNode('default')->
+                    defaultValue('This site is currently in maintenance')->
+                end()->
+
+            end()->
+
+            scalarPrototype()->
+            end();
 
         return $treeBuilder;
     }
 
-    public function makeRoot(& $rootNode = null) {
-        if (is_null($rootNode)) {
-            $treeBuilder = new TreeBuilder();
-            $rootNode = $treeBuilder->root('translations');
-        }
-
-        $rootNode->
-            fixXmlConfig('translation')->
-            arrayPrototype()->
-                children()->
-
-                    scalarNode('language')->
-                        defaultValue('default')->
-                        cannotBeEmpty()->
-                        isRequired()->
-                    end()->
-
-                    scalarNode('content')->
-                        cannotBeEmpty()->
-                        isRequired()->
-                    end()->
-
-                end()->
-
-            end();
-
-        return $rootNode;
-    }
 }

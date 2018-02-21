@@ -30,6 +30,9 @@ use Symfony\Component\Config\Loader\DelegatingLoader;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
 
+use MaintenanceScreen\Configurations\MainConfiguration;
+use MaintenanceScreen\Configurations\TranslationsConfiguration;
+
 /**
  * Main class
  *
@@ -37,41 +40,50 @@ use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
  */
 class MaintenanceScreen {
 
+    /**
+     * @var array $config       Configuration
+     * @var array $translations Translations
+     */
+    protected $config = null, $translations = null;
+
+    /**
+     * @var ConfigurationLoader Configuration loader
+     */
+    protected $configurationLoader;
+
     public function __construct(string $configFile, array $additionalConfigDirs = [], array $additionalLoaders = []) {
-        $configDirs = [__DIR__.'/Resources'];
-        $configDirs = array_merge($additionalConfigDirs, $configDirs);
-
-        $fileLocator = new FileLocator($configDirs);
-
-        $loaders = [
-            new ConfigurationLoaders\YamlConfigurationLoader($fileLocator)
-        ];
-        $loaders = array_merge($additionalLoaders, $loaders);
-
-        $loaderResolver = new LoaderResolver($loaders);
-        $delegatingLoader = new DelegatingLoader($loaderResolver);
-
-        try {
-            $mainConfig = $delegatingLoader->load($fileLocator->locate($configFile));
-        } catch (FileLocatorFileNotFoundException $e) {
-            throw new \RuntimeException('Config file is not exists', 0, $e);
-        }
-
-        if (is_null($mainConfig)) {
-            throw new \RuntimeException('Config file is empty');
-        }
-
-        $processor = new Processor();
-
-        $mainConfiguration = new Configurations\MainConfiguration();
-        $translationConfiguration = new Configurations\TranslationConfiguration();
-
-        $mainConfig = $processor->processConfiguration(
-                $mainConfiguration,
-                $mainConfig
+        $this->configurationLoader = new ConfigurationLoader(
+            $additionalConfigDirs,
+            $additionalLoaders
         );
 
         header('Content-Type: text/plain');
-        var_dump($mainConfig);
+        var_dump($this->getConfig($configFile));
+    }
+
+    public function getConfig(string $configFile = 'config.yml'): array {
+        if (!is_null($this->config)) {
+            return $this->config;
+        }
+
+        $this->config = $this->configurationLoader->loadFile(
+            $configFile,
+            new MainConfiguration()
+        );
+
+        return $this->config;
+    }
+
+    public function getTranslations(): array {
+        if (!is_null($this->translations)) {
+            return $this->translations;
+        }
+
+        $this->config = $this->configurationLoader->loadFile(
+            'translations.yml',
+            new TranslationsConfiguration()
+        );
+
+        return $this->config;
     }
 }
