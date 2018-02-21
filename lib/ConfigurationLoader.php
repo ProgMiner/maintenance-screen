@@ -116,7 +116,7 @@ class ConfigurationLoader {
 
             $processedConfig = $this->processor->processConfiguration(
                 $configuration,
-                []
+                [$config]
             );
 
             array_unshift($configs, $config);

@@ -36,7 +36,7 @@ class MainConfiguration implements ConfigurationInterface {
 
     public function getConfigTreeBuilder() {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('maintenance_screen');
+        $rootNode = $treeBuilder->root('config');
 
         $rootNode->
             children()->
