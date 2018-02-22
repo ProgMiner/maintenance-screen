@@ -135,7 +135,7 @@ class ConfigurationLoader {
             }
         }
 
-        if (empty($processedConfig)) {
+        if (!is_null($lastException) && empty($processedConfig)) {
             throw $lastException;
         }
 

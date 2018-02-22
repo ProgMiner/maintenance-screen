@@ -46,9 +46,15 @@ class MaintenanceScreen {
      */
     protected $translations;
 
-    public function __construct(array $config, TranslationsProvider $translations) {
+    /**
+     * @var Twig_Environment Twig
+     */
+    protected $twig;
+
+    public function __construct(array $config, TranslationsProvider $translations, \Twig_Environment $twig) {
         $this->config = $config;
         $this->translations = $translations;
+        $this->twig = $twig;
     }
 
     public function render($language = null): Response {
@@ -64,7 +70,10 @@ class MaintenanceScreen {
 
         $text = $this->translations->translate($language, $resultLang);
 
-        $response->setContent($text);
+        $response->setContent($this->twig->render($this->config['template_name'], [
+            'language' => $resultLang,
+            'text'     => $text
+        ]));
         $response->headers->set('Content-Language', $resultLang);
 
         return $response;
@@ -82,13 +91,30 @@ class MaintenanceScreen {
      *
      * @param string              $configFile          Config file name
      * @param ConfigurationLoader $configurationLoader Configuration loader
+     * @param Twig_Environment    $twig                Twig
      *
      * @return static Maked instance
      */
-    public static function makeFrom(string $configFile, ConfigurationLoader $configurationLoader) {
+    public static function makeFrom(
+        string $configFile,
+        ConfigurationLoader $configurationLoader,
+        $twig = null
+    ) {
+        if (is_null($twig)) {
+            $twig = new \Twig_Environment(
+                new \Twig_Loader_Filesystem([__DIR__.'/Resources/templates'], __DIR__),
+                ['cache' => __DIR__.'/Resources/twig_cache']
+            );
+        }
+
+        if (!is_a($twig, \Twig_Environment::class, true)) {
+            throw new \InvalidArgumentException('Twig must be a Twig_Environment');
+        }
+
         return new static(
             $configurationLoader->loadFile($configFile, new MainConfiguration()),
-            TranslationsProvider::fromConfigFile('translations.yml', $configurationLoader)
+            TranslationsProvider::fromConfigFile('translations.yml', $configurationLoader),
+            $twig
         );
     }
 }

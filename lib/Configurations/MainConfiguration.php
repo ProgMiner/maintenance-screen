@@ -43,7 +43,7 @@ class MainConfiguration implements ConfigurationInterface {
             children()->
 
                 scalarNode('template_name')->
-                    defaultValue('default')->
+                    isRequired()->
                     cannotBeEmpty()->
                 end()->
 

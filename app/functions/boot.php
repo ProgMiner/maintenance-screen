@@ -43,8 +43,6 @@ function boot() {
             new ConfigurationLoader([__ROOT__.'app/config'])
         );
 
-        ?><!--<?=var_dump($maintenanceScreen)?>--><?php
-
         $maintenanceScreen->send();
     } catch (Throwable $e) {
         throw new \RuntimeException('Invalid config file', 0, $e);
