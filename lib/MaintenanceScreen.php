@@ -45,7 +45,16 @@ class MaintenanceScreen {
         $this->translations = $translations;
     }
 
-    public static function makeUsing(string $configFile, array $configDirs = [], array $loaders = []) {
+    /**
+     * Makes MaintenanceScreen instance from config file
+     *
+     * @param string $configFile Config file name
+     * @param array  $configDirs Directories to search config file
+     * @param array  $loaders    Extra loaders for config file
+     *
+     * @return static Maked instance
+     */
+    public static function makeFrom(string $configFile, array $configDirs = [], array $loaders = []) {
         $configurationLoader = new ConfigurationLoader(
             $configDirs,
             $loaders

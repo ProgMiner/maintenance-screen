@@ -37,7 +37,7 @@ function boot() {
     }
 
     try {
-        $maintenanceScreen = MaintenanceScreen::makeUsing('config.yml', [__ROOT__.'app/config']);
+        $maintenanceScreen = MaintenanceScreen::makeFrom('config.yml', [__ROOT__.'app/config']);
 
         header('Content-Type: text/plain');
         print_r($maintenanceScreen);
