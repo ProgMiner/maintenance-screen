@@ -45,7 +45,7 @@ function boot() {
 
         ?><!--<?=var_dump($maintenanceScreen)?>--><?php
 
-        $maintenanceScreen->render();
+        $maintenanceScreen->send();
     } catch (Throwable $e) {
         throw new \RuntimeException('Invalid config file', 0, $e);
     }

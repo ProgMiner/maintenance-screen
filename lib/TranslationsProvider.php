@@ -39,12 +39,20 @@ class TranslationsProvider {
     protected $default;
 
     /**
+     * @var string Default language
+     */
+    protected $defaultLanguage;
+
+    /**
      * @var array Translations
      */
     protected $translations;
 
-    public function __construct(string $default, array $translations) {
+    public function __construct(string $default, string $defaultLanguage, array $translations) {
         $this->default = $default;
+        $this->defaultLanguage = $defaultLanguage;
+
+        $translations[$defaultLanguage] = $default;
         $this->translations = $translations;
     }
 
@@ -54,14 +62,18 @@ class TranslationsProvider {
         ));
     }
 
-    public function translate(LanguageProvider $language): string {
+    public function translate(LanguageProvider $language, & $resultedLanguage = null): string {
         if (!$this->supports($language)) {
+            $resultedLanguage = $this->defaultLanguage;
+
             return $this->default;
         }
 
-        return $this->translations[$language->searchSupported(
+        $resultedLanguage = $language->searchSupported(
             array_keys($this->translations)
-        )];
+        );
+
+        return $this->translations[$resultedLanguage];
     }
 
     /**
@@ -73,7 +85,8 @@ class TranslationsProvider {
      */
     public static function fromConfigArray(array $config) {
         return new static(
-            $config['default'],
+            $config['default']['text'],
+            $config['default']['language'],
             $config['translations']
         );
     }

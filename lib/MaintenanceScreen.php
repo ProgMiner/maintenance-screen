@@ -24,6 +24,9 @@ SOFTWARE. */
 
 namespace MaintenanceScreen;
 
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+
 use MaintenanceScreen\Configurations\MainConfiguration;
 
 /**
@@ -48,7 +51,7 @@ class MaintenanceScreen {
         $this->translations = $translations;
     }
 
-    public function render($language = null) {
+    public function render($language = null): Response {
         if (is_null($language)) {
             $language = LanguageProvider::makeFrom();
         }
@@ -57,9 +60,21 @@ class MaintenanceScreen {
             throw new \InvalidArgumentException('Language must be a LanguageProvider');
         }
 
-        $text = $this->translations->translate($language);
+        $response = new Response();
 
-        echo $text;
+        $text = $this->translations->translate($language, $resultLang);
+
+        $response->setContent($text);
+        $response->headers->set('Content-Language', $resultLang);
+
+        return $response;
+    }
+
+    public function send($language = null) {
+        $this->
+        render($language)->
+        prepare(Request::createFromGlobals())->
+        send();
     }
 
     /**

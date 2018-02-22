@@ -42,12 +42,23 @@ class TranslationsConfiguration implements ConfigurationInterface {
         $rootNode->
             children()->
 
-                scalarNode('default')->
-                    isRequired()->
-                end()->
-
                 booleanNode('last')->
                     defaultFalse()->
+                end()->
+
+                arrayNode('default')->
+                    children()->
+
+                        scalarNode('language')->
+                            defaultValue('en')->
+                        end()->
+
+                        scalarNode('text')->
+                            isRequired()->
+                        end()->
+
+                    end()->
+
                 end()->
 
                 arrayNode('translations')->

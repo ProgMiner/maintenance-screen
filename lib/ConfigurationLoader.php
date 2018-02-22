@@ -115,6 +115,7 @@ class ConfigurationLoader {
 
         $configs = [];
         $processedConfig = [];
+        $lastException = null;
         foreach ($files as $file) {
             $config = $loader->load($file);
 
@@ -130,8 +131,12 @@ class ConfigurationLoader {
                     break;
                 }
             } catch (ConfigException $e) {
-                continue;
+                $lastException = $e;
             }
+        }
+
+        if (empty($processedConfig)) {
+            throw $lastException;
         }
 
         return $processedConfig;
