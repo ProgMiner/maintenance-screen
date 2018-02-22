@@ -48,6 +48,20 @@ class MaintenanceScreen {
         $this->translations = $translations;
     }
 
+    public function render($language = null) {
+        if (is_null($language)) {
+            $language = LanguageProvider::makeFrom();
+        }
+
+        if (!is_a($language, LanguageProvider::class, false)) {
+            throw new \InvalidArgumentException('Language must be a LanguageProvider');
+        }
+
+        $text = $this->translations->translate($language);
+
+        echo $text;
+    }
+
     /**
      * Makes MaintenanceScreen instance from config file
      *

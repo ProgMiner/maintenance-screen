@@ -68,9 +68,9 @@ class LanguageProvider {
      *
      * @param string $lang Language name
      *
-     * @return boolean Is language supported
+     * @return bool Is language supported
      */
-    public function isSupported(string $lang, bool $strict = false): boolean {
+    public function isSupported(string $lang, bool $strict = false): bool {
         if (in_array($lang, $this->languages, true)) {
             return true;
         }
@@ -83,25 +83,6 @@ class LanguageProvider {
     }
 
     /**
-     * Returns language or null if not supported
-     *
-     * @param string $lang Language name
-     *
-     * @return string|null Supported language or null
-     */
-    public function getSupported(string $lang) {
-        if ($this->isSupported($lang, true)) {
-            return $lang;
-        }
-
-        if ($this->isSupported($lang)) {
-            return explode('-', $lang, 2)[0];
-        }
-
-        return null;
-    }
-
-    /**
      * Finds and returns supported language from list
      *
      * @param array $langs List of language names
@@ -110,10 +91,8 @@ class LanguageProvider {
      */
     public function searchSupported(array $langs) {
         foreach ($langs as $lang) {
-            $supported = $this->getSupported($lang);
-
-            if (!is_null($supported)) {
-                return $supported;
+            if ($this->isSupported($lang)) {
+                return $lang;
             }
         }
 
@@ -129,9 +108,13 @@ class LanguageProvider {
      *
      * @link https://m.habrahabr.ru/post/159129/
      */
-    public static function makeFrom($acceptLanguage = null): static {
+    public static function makeFrom($acceptLanguage = null) {
         if (is_null($acceptLanguage)) {
-            return static::makeFromGlobal();
+            try {
+                return static::makeFromGlobal();
+            } catch (\Throwable $e) {
+                return new static([]);
+            }
         }
 
         $acceptLanguage = strtolower((string) $acceptLanguage);
@@ -157,14 +140,14 @@ class LanguageProvider {
      *
      * @return static
      */
-    public static function makeFromGlobal(): static {
+    public static function makeFromGlobal() {
         if (
-            !isset($_SERVER['HTTP_ACCEPTED_LANGUAGE']) ||
-            is_null($_SERVER['HTTP_ACCEPTED_LANGUAGE'])
+            !isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ||
+            is_null($_SERVER['HTTP_ACCEPT_LANGUAGE'])
         ) {
-            throw new \RuntimeException('Accepted-Language header is not set');
+            throw new \RuntimeException('Accept-Language header is not set');
         }
 
-        return static::makeFrom($_SERVER['HTTP_ACCEPTED_LANGUAGE']);
+        return static::makeFrom($_SERVER['HTTP_ACCEPT_LANGUAGE']);
     }
 }

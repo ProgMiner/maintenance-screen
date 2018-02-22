@@ -1,4 +1,5 @@
-default: "Site is in maintenance"
+default: "Site is in maintenance mode"
 last: false
 translations:
-    - {language: ru-RU, text: "Сайт в режиме техобслуживания"}
+    - {language: ru, text: "Сайт в режиме техобслуживания"}
+    - {language: uk, text: "Сайт в режимі техобслуговування"}

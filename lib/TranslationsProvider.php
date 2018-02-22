@@ -48,7 +48,7 @@ class TranslationsProvider {
         $this->translations = $translations;
     }
 
-    public function supports(LanguageProvider $language): boolean {
+    public function supports(LanguageProvider $language): bool {
         return !is_null($language->searchSupported(
             array_keys($this->translations)
         ));
