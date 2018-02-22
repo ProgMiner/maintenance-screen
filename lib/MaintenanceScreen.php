@@ -25,7 +25,6 @@ SOFTWARE. */
 namespace MaintenanceScreen;
 
 use MaintenanceScreen\Configurations\MainConfiguration;
-use MaintenanceScreen\Configurations\TranslationsConfiguration;
 
 /**
  * Main class
@@ -35,12 +34,16 @@ use MaintenanceScreen\Configurations\TranslationsConfiguration;
 class MaintenanceScreen {
 
     /**
-     * @var array $config       Configuration
-     * @var array $translations Translations
+     * @var array Configuration
      */
-    protected $config, $translations;
+    protected $config;
 
-    public function __construct(array $config, array $translations) {
+    /**
+     * @var TranslationsProvider Translations
+     */
+    protected $translations;
+
+    public function __construct(array $config, TranslationsProvider $translations) {
         $this->config = $config;
         $this->translations = $translations;
     }
@@ -48,33 +51,15 @@ class MaintenanceScreen {
     /**
      * Makes MaintenanceScreen instance from config file
      *
-     * @param string $configFile Config file name
-     * @param array  $configDirs Directories to search config file
-     * @param array  $loaders    Extra loaders for config file
+     * @param string              $configFile          Config file name
+     * @param ConfigurationLoader $configurationLoader Configuration loader
      *
      * @return static Maked instance
      */
-    public static function makeFrom(string $configFile, array $configDirs = [], array $loaders = []) {
-        $configurationLoader = new ConfigurationLoader(
-            $configDirs,
-            $loaders
-        );
-
-        $translations = $configurationLoader->loadFileWhile(
-            'translations.yml',
-            new TranslationsConfiguration(),
-            function($file, $config) { return !$config['last']; }
-        );
-
-        unset($translations['last']);
-        foreach ($translations['translations'] as $key => $node) {
-            unset($translations['translations'][$key]);
-            $translations['translations'][$key] = $node['text'];
-        }
-
+    public static function makeFrom(string $configFile, ConfigurationLoader $configurationLoader) {
         return new static(
             $configurationLoader->loadFile($configFile, new MainConfiguration()),
-            $translations
+            TranslationsProvider::fromConfigFile('translations.yml', $configurationLoader)
         );
     }
 }

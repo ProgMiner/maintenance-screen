@@ -25,6 +25,7 @@ SOFTWARE. */
 namespace MaintenanceScreen\Application;
 
 use MaintenanceScreen\MaintenanceScreen;
+use MaintenanceScreen\ConfigurationLoader;
 
 /**
  * Boot function
@@ -37,7 +38,10 @@ function boot() {
     }
 
     try {
-        $maintenanceScreen = MaintenanceScreen::makeFrom('config.yml', [__ROOT__.'app/config']);
+        $maintenanceScreen = MaintenanceScreen::makeFrom(
+            'config.yml',
+            new ConfigurationLoader([__ROOT__.'app/config'])
+        );
 
         header('Content-Type: text/plain');
         print_r($maintenanceScreen);

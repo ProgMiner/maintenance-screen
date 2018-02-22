@@ -43,21 +43,81 @@ use MaintenanceScreen\ConfigurationLoaders\YamlConfigurationLoader;
 class LanguageProvider {
 
     /**
-     * @var array Language priorities
+     * @var array Languages
      */
-    protected $priorities = [];
+    protected $languages = [];
 
-    public function __construct(array $priorities) {
-        foreach ($priorities as $key => $value) {
-            if (
-                !is_string($key) || 
-                !(is_int($value) || is_float($value))
-            ) {
-                continue;
+    public function __construct(array $languages) {
+        foreach ($languages as $lang) {
+            $this->languages[] = $lang;
+
+            if (false !== strpos($lang, '-')) {
+                $this->languages[] = explode('-', $lang, 2)[0];
             }
-
-            $priorities[$key] = $value;
         }
+
+        $this->languages = array_unique($this->languages);
+    }
+
+    public function getLanguages(): array {
+        return $this->languages;
+    }
+
+    /**
+     * Returns is language is supported
+     *
+     * @param string $lang Language name
+     *
+     * @return boolean Is language supported
+     */
+    public function isSupported(string $lang, bool $strict = false): boolean {
+        if (in_array($lang, $this->languages, true)) {
+            return true;
+        }
+
+        if ($strict || false === strpos($lang, '-')) {
+            return false;
+        }
+
+        return in_array(explode('-', $lang, 2)[0], $this->languages, true);
+    }
+
+    /**
+     * Returns language or null if not supported
+     *
+     * @param string $lang Language name
+     *
+     * @return string|null Supported language or null
+     */
+    public function getSupported(string $lang) {
+        if ($this->isSupported($lang, true)) {
+            return $lang;
+        }
+
+        if ($this->isSupported($lang)) {
+            return explode('-', $lang, 2)[0];
+        }
+
+        return null;
+    }
+
+    /**
+     * Finds and returns supported language from list
+     *
+     * @param array $langs List of language names
+     *
+     * @return string|null Searched language or null
+     */
+    public function searchSupported(array $langs) {
+        foreach ($langs as $lang) {
+            $supported = $this->getSupported($lang);
+
+            if (!is_null($supported)) {
+                return $supported;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -74,17 +134,21 @@ class LanguageProvider {
             return static::makeFromGlobal();
         }
 
-        $acceptLanguage = (string) $acceptLanguage;
+        $acceptLanguage = strtolower((string) $acceptLanguage);
 
         if (preg_match_all('/([a-z]{1,8}(?:-[a-z]{1,8})?)(?:;q=([0-9.]+))?/', $acceptLanguage, $matches)) {
-            $this->priorities = array_combine($matches[1], $matches[2]);
+            $priorities = array_combine($matches[1], $matches[2]);
 
-            foreach ($this->priorities as $n => $v) {
-                $this->priorities[$n] = $v ? $v : 1;
+            foreach ($priorities as $n => $v) {
+                $priorities[$n] = $v ? $v : 1;
             }
 
-            arsort($this->priorities, SORT_NUMERIC);
+            arsort($priorities, SORT_NUMERIC);
+
+            return new static(array_keys($priorities));
         }
+
+        throw new \UnexpectedValueException('Accept language is not contains Accept-Language header');
     }
 
     /**
