@@ -1,6 +1,6 @@
 {
     "name": "progminer/maintenance-screen",
-    "description": "The Maintenance screen for your site",
+    "description": "The \"Maintenance mode\" screen for your site",
     "type": "project",
     "license": "MIT",
     "authors": [
