@@ -42,33 +42,35 @@ class MaintenanceScreen {
     protected $config;
 
     /**
-     * @var TranslationsProvider Translations
+     * @var TranslatorProvider Translator provider
      */
-    protected $translations;
+    protected $translatorProvider;
 
     /**
      * @var Twig_Environment Twig
      */
     protected $twig;
 
-    public function __construct(array $config, TranslationsProvider $translations, \Twig_Environment $twig) {
+    public function __construct(array $config, TranslatorProvider $translatorProvider, \Twig_Environment $twig) {
         $this->config = $config;
-        $this->translations = $translations;
+        $this->translatorProvider = $translatorProvider;
         $this->twig = $twig;
     }
 
     public function render($request = null): Response {
         $request = self::checkRequest($request);
 
+        $translator = $this->translatorProvider->getPreferredTranslator(
+            array_merge($request->getLanguages(), [$this->config['default_language']])
+        );
+
         $response = new Response();
 
-        $text = $this->translations->translate($request, $resultLang);
-
-        $response->setContent($this->twig->render($this->config['template_name'], [
-            'language' => $resultLang,
-            'text'     => $text
-        ]));
-        $response->headers->set('Content-Language', $resultLang);
+        $response->setContent($this->twig->render(
+            $this->config['template_name'],
+            $translator->getTranslations() + ['lang' => 'ru']
+        ));
+        $response->headers->set('Content-Language', $translator->translate('lang'));
 
         return $response;
     }
@@ -85,15 +87,17 @@ class MaintenanceScreen {
     /**
      * Makes MaintenanceScreen instance from config file
      *
-     * @param string              $configFile          Config file name
-     * @param ConfigurationLoader $configurationLoader Configuration loader
-     * @param Twig_Environment    $twig                Twig
+     * @param string              $configFile        Config file name
+     * @param ConfigurationLoader $configLoader      Config files loader
+     * @param ConfigurationLoader $translatorsLoader Translator config files loader
+     * @param Twig_Environment    $twig              Twig
      *
      * @return static Maked instance
      */
     public static function makeFrom(
         string $configFile,
-        ConfigurationLoader $configurationLoader,
+        ConfigurationLoader $configLoader,
+        $translatorsLoader = null,
         $twig = null
     ) {
         if (is_null($twig)) {
@@ -107,9 +111,19 @@ class MaintenanceScreen {
             throw new \InvalidArgumentException('Twig must be a Twig_Environment');
         }
 
+        if (is_null($translatorsLoader)) {
+            $translatorsLoader = new ConfigurationLoader(
+                [__DIR__.'/Resources/translations']
+            );
+        }
+
+        if (!is_a($translatorsLoader, ConfigurationLoader::class, true)) {
+            throw new \InvalidArgumentException('Translators loader must be a ConfigurationLoader');
+        }
+
         return new static(
-            $configurationLoader->loadFile($configFile, new MainConfiguration()),
-            TranslationsProvider::fromConfigFile('translations.yml', $configurationLoader),
+            $configLoader->loadFile($configFile, new MainConfiguration()),
+            new TranslatorProvider($translatorsLoader),
             $twig
         );
     }

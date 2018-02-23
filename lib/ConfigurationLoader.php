@@ -62,11 +62,8 @@ class ConfigurationLoader {
      */
     protected $processor;
 
-    public function __construct(array $configDirs = [], array $loaders = []) {
-        $this->fileLocator = new FileLocator(array_merge(
-            $configDirs,
-            [__DIR__.'/Resources']
-        ));
+    public function __construct(array $configDirs = [__DIR__.'/Resources'], array $loaders = []) {
+        $this->fileLocator = new FileLocator($configDirs);
 
         $this->resolver = new LoaderResolver(array_merge(
             $loaders,

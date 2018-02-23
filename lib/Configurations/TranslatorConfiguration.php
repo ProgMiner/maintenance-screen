@@ -33,49 +33,34 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
  *
  * @author ProgMiner
  */
-class TranslationsConfiguration implements ConfigurationInterface {
+class TranslatorConfiguration implements ConfigurationInterface {
 
     public function getConfigTreeBuilder() {
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('translations');
 
         $rootNode->
+            fixXmlConfig('translation')->
+            useAttributeAsKey('key')->
             children()->
 
-                booleanNode('last')->
-                    defaultFalse()->
+                scalarNode('lang')->
+                    isRequired()->
+                    cannotBeEmpty()->
                 end()->
 
-                arrayNode('default')->
-                    children()->
+            end()->
 
-                        scalarNode('language')->
-                            defaultValue('en')->
-                        end()->
+            arrayPrototype()->
+                children()->
 
-                        scalarNode('text')->
-                            isRequired()->
-                        end()->
-
+                    scalarNode('text')->
+                        isRequired()->
                     end()->
 
                 end()->
-
-                arrayNode('translations')->
-                    fixXmlConfig('translation')->
-                    useAttributeAsKey('language')->
-
-                    arrayPrototype()->
-                        children()->
-
-                            scalarNode('text')->
-                                isRequired()->
-                            end()->
-
-                        end()->
-
-                    end()->
-
+                validate()->
+                    always(function($node) { return $node['text']; })->
                 end()->
 
             end();

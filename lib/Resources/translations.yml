@@ -1,9 +1,0 @@
-last: false
-
-default:
-    language: en
-    text: "Site in maintenance mode"
-
-translations:
-    - {language: ru, text: "Сайт в режиме техобслуживания"}
-    - {language: uk, text: "Сайт в режимі техобслуговування"}

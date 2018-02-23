@@ -47,6 +47,11 @@ class MainConfiguration implements ConfigurationInterface {
                     cannotBeEmpty()->
                 end()->
 
+                scalarNode('default_language')->
+                    isRequired()->
+                    cannotBeEmpty()->
+                end()->
+
             end();
 
         return $treeBuilder;
