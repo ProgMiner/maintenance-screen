@@ -69,7 +69,7 @@ class MaintenanceScreen {
         $response->setContent($this->twig->render(
             $this->config['template_name'],
             $translator->getTranslations() + ['lang' => 'ru']
-        ));
+        )."\n<!-- Powered by progminer/maintenance-screen (https://packagist.org/packages/progminer/maintenance-screen) -->\n");
         $response->headers->set('Content-Language', $translator->translate('lang'));
 
         return $response;
