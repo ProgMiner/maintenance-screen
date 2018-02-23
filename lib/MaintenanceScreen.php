@@ -57,18 +57,12 @@ class MaintenanceScreen {
         $this->twig = $twig;
     }
 
-    public function render($language = null): Response {
-        if (is_null($language)) {
-            $language = LanguageProvider::makeFrom();
-        }
-
-        if (!is_a($language, LanguageProvider::class, false)) {
-            throw new \InvalidArgumentException('Language must be a LanguageProvider');
-        }
+    public function render($request = null): Response {
+        $request = self::checkRequest($request);
 
         $response = new Response();
 
-        $text = $this->translations->translate($language, $resultLang);
+        $text = $this->translations->translate($request, $resultLang);
 
         $response->setContent($this->twig->render($this->config['template_name'], [
             'language' => $resultLang,
@@ -79,10 +73,12 @@ class MaintenanceScreen {
         return $response;
     }
 
-    public function send($language = null) {
+    public function send($request = null) {
+        $request = self::checkRequest($request);
+
         $this->
-        render($language)->
-        prepare(Request::createFromGlobals())->
+        render($request)->
+        prepare($request)->
         send();
     }
 
@@ -116,5 +112,17 @@ class MaintenanceScreen {
             TranslationsProvider::fromConfigFile('translations.yml', $configurationLoader),
             $twig
         );
+    }
+
+    private static function checkRequest($request): Request {
+        if (is_null($request)) {
+            return Request::createFromGlobals();
+        }
+
+        if (!is_a($request, Request::class, true)) {
+            throw new \InvalidArgumentException('Request must be a Request');
+        }
+
+        return $request;
     }
 }

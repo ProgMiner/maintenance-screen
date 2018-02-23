@@ -26,6 +26,8 @@ namespace MaintenanceScreen;
 
 use MaintenanceScreen\Configurations\TranslationsConfiguration;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Provides translations
  *
@@ -34,14 +36,9 @@ use MaintenanceScreen\Configurations\TranslationsConfiguration;
 class TranslationsProvider {
 
     /**
-     * @var string Default translation
+     * @var array Languages
      */
-    protected $default;
-
-    /**
-     * @var string Default language
-     */
-    protected $defaultLanguage;
+    protected $languages;
 
     /**
      * @var array Translations
@@ -49,29 +46,25 @@ class TranslationsProvider {
     protected $translations;
 
     public function __construct(string $default, string $defaultLanguage, array $translations) {
-        $this->default = $default;
-        $this->defaultLanguage = $defaultLanguage;
-
-        $translations[$defaultLanguage] = $default;
+        $this->languages = array_keys($translations);
         $this->translations = $translations;
+
+        array_unshift($this->languages, $defaultLanguage);
+        $this->translations[$defaultLanguage] = $default;
     }
 
-    public function supports(LanguageProvider $language): bool {
-        return !is_null($language->searchSupported(
-            array_keys($this->translations)
-        ));
-    }
-
-    public function translate(LanguageProvider $language, & $resultedLanguage = null): string {
-        if (!$this->supports($language)) {
-            $resultedLanguage = $this->defaultLanguage;
-
-            return $this->default;
-        }
-
-        $resultedLanguage = $language->searchSupported(
-            array_keys($this->translations)
+    public function supports(Request $request): bool {
+        return !is_null(
+            $request->getPreferredLanguage($this->languages)
         );
+    }
+
+    public function translate(Request $request, & $resultedLanguage = null): string {
+        $resultedLanguage = $request->getPreferredLanguage($this->languages);
+
+        if (is_null($resultedLanguage)) {
+            $resultedLanguage = $this->defaultLanguage;
+        }
 
         return $this->translations[$resultedLanguage];
     }
