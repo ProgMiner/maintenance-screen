@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+    <head>
+        <title>{{ title }}</title>
+
+        <script type="text/javascript">
+        var body, text;
+
+        function setVariables() {
+            body = document.body;
+            text = document.getElementsByTagName('div')[0];
+        }
+
+        function updateColor(ev) {
+            var ev = ev || window.event, x, y;
+
+            var width = body.clientWidth,
+                height = body.clientHeight,
+                diagonal = Math.sqrt(width * width + height * height);
+
+            if (document.all) { 
+                x = ev.x + document.body.scrollLeft; 
+                y = ev.y + document.body.scrollTop; 
+            } else {
+                x = ev.pageX;
+                y = ev.pageY;
+            }
+
+            var r = Math.trunc(x / width * 256),
+                b = Math.trunc(y / height * 256),
+                g = Math.trunc(Math.sqrt(x * x + y * y) / diagonal * 256);
+
+            body.style.backgroundColor = "rgb(" + r + ", " + g + ", " + b + ")";
+            text.style.color = "rgb(" + (256 - r) + ", " + (256 - g) + ", " + (256 - b) + ")";
+            text.style.textShadow = "0px 0px 1px rgb(" +
+                                        Math.abs(128 - Math.trunc(r/2)) + ", " +
+                                        Math.abs(128 - Math.trunc(g/2)) + ", " +
+                                        Math.abs(128 - Math.trunc(b/2)) +
+                                    "), 0px 0px 20px";
+        }
+        </script>
+
+        <style>
+        html, body {
+            height: 100%;
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+        }
+        body > div:first-child {
+            margin-top: 200px;
+            text-align: center;
+            font-size: 24pt;
+            text-shadow: 0px 0px 20px;
+            user-select: text;
+            cursor: default;
+        }
+
+        body > div:first-child::-moz-selection,
+        body > div:first-child *::-moz-selection {
+            background-color: rgba(0, 0, 127, 0.1);
+        }
+        body > div:first-child::selection,
+        body > div:first-child *::selection {
+            background-color: rgba(0, 0, 127, 0.1);
+        }
+        </style>
+    </head>
+    <body onLoad="setVariables();" onMouseMove="updateColor(event);">
+        <div>{{ text }}</div>
+    </body>
+</html>
