@@ -40,7 +40,18 @@ function boot() {
     try {
         $maintenanceScreen = MaintenanceScreen::makeFrom(
             'config.yml',
-            new ConfigurationLoader([__ROOT__.'app/config'])
+            new ConfigurationLoader([__ROOT__.'app/config']),
+            new ConfigurationLoader([
+                __ROOT__.'app/translations',
+                __ROOT__.'lib/Resources/translations'
+            ]),
+            new \Twig_Environment(
+                new \Twig_Loader_Filesystem([
+                    __ROOT__.'app/templates',
+                    __ROOT__.'lib/Resources/templates'
+                ], __ROOT__),
+                ['cache' => __ROOT__.'app/twig-cache']
+            )
         );
 
         $maintenanceScreen->send();
