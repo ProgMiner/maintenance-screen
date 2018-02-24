@@ -56,6 +56,8 @@ class TranslatorProvider {
             return Translator::fromConfigFile($lang, $this->configLoader);
         }
 
+        $lang = str_replace('-', '_', $lang);
+
         $exception = null;
         try {
             return Translator::fromConfigFile("$lang.yml", $this->configLoader);
@@ -63,7 +65,6 @@ class TranslatorProvider {
             $exception = $e;
         }
 
-        $lang = str_replace('-', '_', $lang);
         if (false !== ($pos = strpos($lang, '_'))) {
             try {
                 return $this->getTranslator(substr($lang, 0, $pos));
