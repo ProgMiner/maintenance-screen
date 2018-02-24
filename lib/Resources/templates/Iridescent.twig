@@ -20,75 +20,84 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. #}
 
-<!DOCTYPE html>
-<html lang="{{ lang }}">
-    <head>
-        <title>{{ title }}</title>
+{% extends "Default.twig" %}
 
-        <script type="text/javascript">
-        var body, text;
+{% block head %}{{ parent() }}
+    <script type="text/javascript">
+    var text, body;
 
-        function setVariables() {
-            body = document.body;
-            text = document.getElementsByTagName('div')[0];
+    function setColor(r, g, b) {
+        var r = Math.trunc(r * 256),
+            b = Math.trunc(b * 256),
+            g = Math.trunc(g * 256);
+
+        body.style.backgroundColor = "rgb(" + r + ", " + g + ", " + b + ")";
+        text.style.color = "rgb(" + (256 - r) + ", " + (256 - g) + ", " + (256 - b) + ")";
+        text.style.textShadow = "0px 0px 1px rgb(" +
+                                    Math.abs(128 - Math.trunc(r/2)) + ", " +
+                                    Math.abs(128 - Math.trunc(g/2)) + ", " +
+                                    Math.abs(128 - Math.trunc(b/2)) +
+                                "), 0px 0px 20px";
+    }
+    </script>
+
+    <style>
+    html, body {
+        height: 100%;
+        margin: 0px;
+        padding: 0px;
+        overflow: hidden;
+    }
+    body > div:first-child {
+        margin-top: 200px;
+        text-align: center;
+        font-size: 24pt;
+        text-shadow: 0px 0px 20px;
+        user-select: text;
+        cursor: default;
+    }
+
+    body > div:first-child::-moz-selection,
+    body > div:first-child *::-moz-selection {
+        background-color: rgba(0, 0, 127, 0.1);
+    }
+    body > div:first-child::selection,
+    body > div:first-child *::selection {
+        background-color: rgba(0, 0, 127, 0.1);
+    }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div>{{ text }}</div>
+
+    <script type="text/javascript">
+    body = document.body;
+    text = document.getElementsByTagName('div')[0];
+
+    (function() {
+        var x = Math.random(),
+            y = Math.random();
+
+        setColor(x, Math.sqrt(x * x + y * y) / Math.sqrt(2), y);
+    })();
+
+    body.onmousemove = function(ev) {
+        var ev = ev || window.event, x, y;
+
+        var width = body.clientWidth,
+            height = body.clientHeight,
+            diagonal = Math.sqrt(width * width + height * height);
+
+        if (document.all) { 
+            x = ev.x + document.body.scrollLeft; 
+            y = ev.y + document.body.scrollTop; 
+        } else {
+            x = ev.pageX;
+            y = ev.pageY;
         }
 
-        function updateColor(ev) {
-            var ev = ev || window.event, x, y;
-
-            var width = body.clientWidth,
-                height = body.clientHeight,
-                diagonal = Math.sqrt(width * width + height * height);
-
-            if (document.all) { 
-                x = ev.x + document.body.scrollLeft; 
-                y = ev.y + document.body.scrollTop; 
-            } else {
-                x = ev.pageX;
-                y = ev.pageY;
-            }
-
-            var r = Math.trunc(x / width * 256),
-                b = Math.trunc(y / height * 256),
-                g = Math.trunc(Math.sqrt(x * x + y * y) / diagonal * 256);
-
-            body.style.backgroundColor = "rgb(" + r + ", " + g + ", " + b + ")";
-            text.style.color = "rgb(" + (256 - r) + ", " + (256 - g) + ", " + (256 - b) + ")";
-            text.style.textShadow = "0px 0px 1px rgb(" +
-                                        Math.abs(128 - Math.trunc(r/2)) + ", " +
-                                        Math.abs(128 - Math.trunc(g/2)) + ", " +
-                                        Math.abs(128 - Math.trunc(b/2)) +
-                                    "), 0px 0px 20px";
-        }
-        </script>
-
-        <style>
-        html, body {
-            height: 100%;
-            margin: 0px;
-            padding: 0px;
-            overflow: hidden;
-        }
-        body > div:first-child {
-            margin-top: 200px;
-            text-align: center;
-            font-size: 24pt;
-            text-shadow: 0px 0px 20px;
-            user-select: text;
-            cursor: default;
-        }
-
-        body > div:first-child::-moz-selection,
-        body > div:first-child *::-moz-selection {
-            background-color: rgba(0, 0, 127, 0.1);
-        }
-        body > div:first-child::selection,
-        body > div:first-child *::selection {
-            background-color: rgba(0, 0, 127, 0.1);
-        }
-        </style>
-    </head>
-    <body onLoad="setVariables();" onMouseMove="updateColor(event);">
-        <div>{{ text }}</div>
-    </body>
-</html>
+        setColor(x / width, Math.sqrt(x * x + y * y) / diagonal, y / height);
+    };
+    </script>
+{% endblock %}
