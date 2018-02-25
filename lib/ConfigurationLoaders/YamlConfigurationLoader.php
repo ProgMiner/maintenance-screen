@@ -35,11 +35,17 @@ use Symfony\Component\Yaml\Yaml;
  */
 class YamlConfigurationLoader extends FileLoader {
 
-    public function load($resource, $type = null) {
+    /**
+     * {@inheritdoc}
+     */
+    public function load($resource) {
         return Yaml::parse(file_get_contents($resource));
     }
 
-    public function supports($resource, $type = null) {
+    /**
+     * {@inheritdoc}
+     */
+    public function supports($resource) {
         $ext = pathinfo($resource, PATHINFO_EXTENSION);
 
         return is_string($resource) && 

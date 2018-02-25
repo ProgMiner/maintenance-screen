@@ -65,7 +65,7 @@ class Translator {
     /**
      * Translates key
      *
-     * @param string $key
+     * @param string $key Key
      *
      * @return string|null Translation or null if is not exists
      */

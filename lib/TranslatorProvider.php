@@ -47,7 +47,7 @@ class TranslatorProvider {
      * Makes Translator from config file
      *
      * @param string $lang     Language name
-     * @param bool   $fileName Use language name as full filename
+     * @param bool   $fileName Use language name as full filename?
      *
      * @return Translator
      */

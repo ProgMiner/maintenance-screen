@@ -62,6 +62,10 @@ class ConfigurationLoader {
      */
     protected $processor;
 
+    /**
+     * @param array $configDirs Directories to load configuration files
+     * @param array $loaders    Additional configuration loaders
+     */
     public function __construct(array $configDirs = [__DIR__.'/Resources'], array $loaders = []) {
         $this->fileLocator = new FileLocator($configDirs);
 

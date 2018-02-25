@@ -51,12 +51,27 @@ class MaintenanceScreen {
      */
     protected $twig;
 
+    /**
+     * @param array              $config             Configurations array
+     * @param TranslatorProvider $translatorProvider Translator provider
+     * @param \Twig_Environment  $twig               Twig environment instance
+     */
     public function __construct(array $config, TranslatorProvider $translatorProvider, \Twig_Environment $twig) {
         $this->config = $config;
         $this->translatorProvider = $translatorProvider;
         $this->twig = $twig;
     }
 
+    /**
+     * Renders maintenance screen for Request to Response
+     *
+     * If Request is not provided uses
+     * created from globals instance
+     *
+     * @param Request $request Request for rendering
+     *
+     * @return Response Rendered maintenance screen
+     */
     public function render($request = null): Response {
         $request = self::checkRequest($request);
 
@@ -75,6 +90,14 @@ class MaintenanceScreen {
         return $response;
     }
 
+    /**
+     * Renders and sends maintenance screen for Request
+     *
+     * If Request is not provided uses
+     * created from globals instance
+     *
+     * @param Request $request Request for rendering
+     */
     public function send($request = null) {
         $request = self::checkRequest($request);
 
@@ -90,7 +113,7 @@ class MaintenanceScreen {
      * @param string              $configFile        Config file name
      * @param ConfigurationLoader $configLoader      Config files loader
      * @param ConfigurationLoader $translatorsLoader Translator config files loader
-     * @param Twig_Environment    $twig              Twig
+     * @param \Twig_Environment   $twig              Twig
      *
      * @return static Maked instance
      */

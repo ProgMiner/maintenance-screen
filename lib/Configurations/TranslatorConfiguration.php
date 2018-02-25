@@ -35,6 +35,9 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
  */
 class TranslatorConfiguration implements ConfigurationInterface {
 
+    /**
+     * {@inheritdoc}
+     */
     public function getConfigTreeBuilder() {
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('translations');

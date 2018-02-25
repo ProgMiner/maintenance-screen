@@ -1,3 +1,6 @@
 /vendor/
 
+/sami-cache/
+/sami.phar
+
 .*.sw?
