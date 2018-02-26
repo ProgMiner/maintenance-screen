@@ -47,7 +47,7 @@ class TranslatorProvider implements TranslatorProviderInterface {
     /**
      * {@inheritdoc}
      */
-    public function _getTranslator(string $lang): Translator {
+    protected function _getTranslator(string $lang): Translator {
         if (!isset($this->languages[$lang])) {
             throw new \RuntimeException("Language \"{$lang}\" is not provided");
         }
