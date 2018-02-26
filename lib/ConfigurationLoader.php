@@ -29,7 +29,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderResolver;
 use Symfony\Component\Config\Loader\DelegatingLoader;
 
-use MaintenanceScreen\ConfigurationLoaders\YamlConfigurationLoader;
+use MaintenanceScreen\FileLoader\YamlFileLoader;
 
 /**
  * Configuraion loader
@@ -62,7 +62,7 @@ class ConfigurationLoader {
 
         $this->resolver = new LoaderResolver(array_merge(
             $loaders,
-            [new YamlConfigurationLoader($this->fileLocator)]
+            [new YamlFileLoader($this->fileLocator)]
         ));
 
         $this->loader = new DelegatingLoader($this->resolver);

@@ -22,37 +22,54 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-namespace MaintenanceScreen\ConfigurationLoaders;
-
-use Symfony\Component\Config\Loader\FileLoader;
-
-use Symfony\Component\Yaml\Yaml;
+namespace MaintenanceScreen;
 
 /**
- * Yaml configuration loader
+ * Template renderer for PHP templates
  *
  * @author ProgMiner
  */
-class YamlConfigurationLoader extends FileLoader {
+class PhpTemplateRenderer implements TemplateRendererInterface {
 
     /**
-     * {@inheritdoc}
+     * @var FileLocator $fileLocator File locator for template files
      */
-    public function load($resource, $type = null) {
-        return Yaml::parse(file_get_contents($resource));
+    protected $fileLocator;
+
+    /**
+     * @param FileLocator $fileLocator File locator for template files
+     */
+    public function __construct(FileLocator $fileLocator) {
+        $this->fileLocator = $fileLocator;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supports($resource, $type = null) {
-        $ext = pathinfo($resource, PATHINFO_EXTENSION);
+    public function render(string $template, array $variables): string {
+        $file = $this->fileLocator->locate($template, null, true);
 
-        return is_string($resource) && 
-                (
-                    'yaml' === $ext ||
-                    'yml' === $ext
-                );
+        ob_start();
+        (function() use($file, $variables) {
+            extract($variables);
+
+            require $file;
+        })();
+        $ret = ob_get_contents();
+        ob_end_clean();
+
+        return $ret;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supports(string $template): bool {
+        $ext = pathinfo($template, PATHINFO_EXTENSION);
+
+        return (
+            'php' === $ext ||
+            'phtml' === $ext
+        );
     }
 }
-
