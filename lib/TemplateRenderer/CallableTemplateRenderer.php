@@ -22,7 +22,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-namespace MaintenanceScreen/TemplateRenderer;
+namespace MaintenanceScreen\TemplateRenderer;
 
 /**
  * Template renderer for callable templates
@@ -65,11 +65,6 @@ class CallableTemplateRenderer implements TemplateRendererInterface {
      * {@inheritdoc}
      */
     public function supports(string $template): bool {
-        $ext = pathinfo($template, PATHINFO_EXTENSION);
-
-        return (
-            'php' === $ext ||
-            'phtml' === $ext
-        );
+        return true;
     }
 }

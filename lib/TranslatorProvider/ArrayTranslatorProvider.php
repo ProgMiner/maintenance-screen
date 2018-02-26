@@ -24,6 +24,8 @@ SOFTWARE. */
 
 namespace MaintenanceScreen\TranslatorProvider;
 
+use MaintenanceScreen\Translator;
+
 /**
  * Array-based Translator instances provider
  *

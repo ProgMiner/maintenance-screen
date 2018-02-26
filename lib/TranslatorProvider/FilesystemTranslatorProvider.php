@@ -26,6 +26,9 @@ namespace MaintenanceScreen\TranslatorProvider;
 
 use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
 
+use MaintenanceScreen\ConfigurationLoader;
+use MaintenanceScreen\Translator;
+
 /**
  * Provides Translator instances
  * from directories with config files

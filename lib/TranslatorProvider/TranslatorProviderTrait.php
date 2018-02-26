@@ -24,6 +24,8 @@ SOFTWARE. */
 
 namespace MaintenanceScreen\TranslatorProvider;
 
+use MaintenanceScreen\Translator;
+
 /**
  * Trait for Translator instances providers
  *
