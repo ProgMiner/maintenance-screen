@@ -24,43 +24,30 @@ SOFTWARE. */
 
 namespace MaintenanceScreen;
 
-use Symfony\Component\Config\FileLocator;
-
 /**
- * Template renderer for PHP templates
+ * Template renderer for Twig templates
  *
  * @author ProgMiner
  */
-class PhpTemplateRenderer implements TemplateRendererInterface {
+class TwigTemplateRenderer implements TemplateRendererInterface {
 
     /**
-     * @var FileLocator $fileLocator File locator for template files
+     * @var \Twig_Environment $twig Twig
      */
-    protected $fileLocator;
+    protected $twig;
 
     /**
-     * @param FileLocator $fileLocator File locator for template files
+     * @param \Twig_Environment $twig Twig
      */
-    public function __construct(FileLocator $fileLocator) {
-        $this->fileLocator = $fileLocator;
+    public function __construct(\Twig_Environment $twig) {
+        $this->twig = $twig;
     }
 
     /**
      * {@inheritdoc}
      */
     public function render(string $template, array $variables): string {
-        $file = $this->fileLocator->locate($template, null, true);
-
-        ob_start();
-        (function() use($file, $variables) {
-            extract($variables);
-
-            require $file;
-        })();
-        $ret = ob_get_contents();
-        ob_end_clean();
-
-        return $ret;
+        return $this->twig->render($template, $variables);
     }
 
     /**
@@ -69,9 +56,6 @@ class PhpTemplateRenderer implements TemplateRendererInterface {
     public function supports(string $template): bool {
         $ext = pathinfo($template, PATHINFO_EXTENSION);
 
-        return (
-            'php' === $ext ||
-            'phtml' === $ext
-        );
+        return 'twig' === $ext;
     }
 }
