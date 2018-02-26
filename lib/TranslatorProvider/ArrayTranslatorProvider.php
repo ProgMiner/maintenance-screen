@@ -31,7 +31,7 @@ use MaintenanceScreen\Translator;
  *
  * @author ProgMiner
  */
-class TranslatorProvider implements TranslatorProviderInterface {
+class ArrayTranslatorProvider implements TranslatorProviderInterface {
     use TranslatorProviderTrait;
 
     /**
@@ -54,6 +54,6 @@ class TranslatorProvider implements TranslatorProviderInterface {
             throw new \RuntimeException("Language \"{$lang}\" is not provided");
         }
 
-        return new Translator($this->languages[$lang]);
+        return new Translator($this->languages[$lang], $lang);
     }
 }

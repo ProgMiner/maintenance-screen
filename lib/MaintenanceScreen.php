@@ -152,7 +152,7 @@ class MaintenanceScreen {
 
         if (is_null($templateRenderer)) {
             $templateRenderer = new CallableTemplateRenderer([
-                function($vars) { ?>
+                'Default' => function($vars) { ?>
 <!DOCTYPE html>
 <html lang="<?=$vars['lang']?>">
     <head>
@@ -172,7 +172,7 @@ class MaintenanceScreen {
         }
 
         return new static(
-            $configLoader->loadFile($configFile),
+            (array) $configLoader->loadFile($configFile),
             $translatorProvider,
             $templateRenderer
         );
