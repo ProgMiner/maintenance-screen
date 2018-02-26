@@ -25,15 +25,17 @@ You can use this library for full or particional site closing.
 It is a base application based on this library.
 If you needs to making you own application based on this library, please use sources from the above mentioned project.
 
-- In second case you need to create an instance of [`MaintenanceScreen\MaintenanceScreen`](https://progminer.github.io/maintenance-screen/MaintenanceScreen/MaintenanceScreen.html) using constructor (regular method) or [`MaintenanceScreen\MaintenanceScreen::makeFrom`](https://progminer.github.io/maintenance-screen/MaintenanceScreen/MaintenanceScreen.html#method_makeFrom) (if you have a special configuration file).
+- In second case you need to create an instance of [`\MaintenanceScreen\MaintenanceScreen`](https://progminer.github.io/maintenance-screen/MaintenanceScreen/MaintenanceScreen.html) using constructor (regular method)
+or [`\MaintenanceScreen\MaintenanceScreen::makeFrom`](https://progminer.github.io/maintenance-screen/MaintenanceScreen/MaintenanceScreen.html#method_makeFrom) (if you have a special configuration file).
 
 Here is a regular second case method example:
 
 #### Example
 ```php
 use MaintenanceScreen\MaintenanceScreen;
-use MaintenanceScreen\TranslatorProvider;
 use MaintenanceScreen\ConfigurationLoader;
+
+use MaintenanceScreen\TranslatorProvider\ArrayTranslatorProvider;
 
 $config = [
     'template_name'    => 'Default', // template name
@@ -42,14 +44,14 @@ $config = [
 ];
 ```
 
-Here you have to make `TranslatorProviderInterface` instance
+Here you have to make `\MaintenanceScreen\TranslatorProvider\TranslatorProviderInterface` instance
 and you have two included methods:
-- Use translations from array (`TranslatorProvider` class)
-- Use translations from config files (`FilesystemTranslatorProvider` class)
+- Use translations from array (`\MaintenanceScreen\TranslatorProvider\ArrayTranslatorProvider` class)
+- Use translations from config files (`\MaintenanceScreen\TranslatorProvider\FilesystemTranslatorProvider` class)
 
 A simple example for first method here:
 ```php
-$translatorsProvider = new TranslatorProvider([
+$translatorsProvider = new ArrayTranslatorProvider([
     'en' => ['title' => 'Title', 'text' => 'Text'],
     'ru' => ['title' => 'Заголовок', 'text' => 'Текст']
 ]);
@@ -64,22 +66,16 @@ $twig = new \Twig_Environment(
 );
 ```
 
-And, finally, [`MaintenanceScreen\MaintenanceScreen`](https://progminer.github.io/maintenance-screen/MaintenanceScreen/MaintenanceScreen.html) instance:
+And, finally, [`\MaintenanceScreen\MaintenanceScreen`](https://progminer.github.io/maintenance-screen/MaintenanceScreen/MaintenanceScreen.html) instance:
 ```php
-$maintenanceScreen = new MaintenanceScreen(
-    $config,
-    new TranslatorProvider($translatorsLoader),
-    $twig
-);
+$maintenanceScreen = new MaintenanceScreen($config, $translatorProvider, $twig);
 ```
 
-When you have an instance of [`MaintenanceScreen\MaintenanceScreen`](https://progminer.github.io/maintenance-screen/MaintenanceScreen/MaintenanceScreen.html) you can render and/or send rendered `Response`:
+When you have an instance of [`\MaintenanceScreen\MaintenanceScreen`](https://progminer.github.io/maintenance-screen/MaintenanceScreen/MaintenanceScreen.html)
+you can render and/or send rendered `\Symfony\Component\HttpFoundation\Response`:
 
 - Rendering:
 ```php
-/**
- * @var \Symfony\Component\HttpFoundation\Response
- */
 $response = $maintenanceScreen->render();
 ```
 - Sending:
@@ -88,7 +84,7 @@ $maintenanceScreen->send();
 ```
 
 Both methods have not required argument `$request` - instance of class `\Symfony\Component\HttpFoundation\Request`.
-If it is not provided methods calls a `Request::createFromGlobals` method for getting current request.
+If it is not provided methods calls a `\Symfony\Component\HttpFoundation\Request::createFromGlobals` method for getting current request.
 
 ### Documentation
 

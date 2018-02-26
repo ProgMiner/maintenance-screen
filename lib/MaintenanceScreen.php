@@ -31,6 +31,9 @@ use Symfony\Component\Config\Definition\Processor;
 
 use MaintenanceScreen\Configurations\MainConfiguration;
 
+use MaintenanceScreen\TranslatorProvider\TranslatorProviderInterface;
+use MaintenanceScreen\TranslatorProvider\FilesystemTranslatorProvider;
+
 /**
  * Main class
  *
