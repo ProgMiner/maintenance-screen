@@ -56,10 +56,10 @@ class FilesystemTranslatorProvider implements TranslatorProviderInterface {
      * @return Translator
      */
     public function _getTranslator(string $lang, bool $fileName = false): Translator {
-        if ($fileName) {
-            return Translator::fromConfigFile($lang, $this->configLoader);
+        if (!$fileName) {
+            $lang .= '.yml';
         }
 
-        return Translator::fromConfigFile("$lang.yml", $this->configLoader);
+        return new Translator($this->configLoader->loadFile($lang));
     }
 }

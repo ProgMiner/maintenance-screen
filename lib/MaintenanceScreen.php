@@ -54,9 +54,9 @@ class MaintenanceScreen {
     protected $twig;
 
     /**
-     * @param array              $config             Configurations array
+     * @param array                       $config             Configurations array
      * @param TranslatorProviderInterface $translatorProvider Translator provider
-     * @param \Twig_Environment  $twig               Twig environment instance
+     * @param \Twig_Environment           $twig               Twig environment instance
      */
     public function __construct(array $config, TranslatorProviderInterface $translatorProvider, \Twig_Environment $twig) {
         $this->config = (new Processor())->processConfiguration(
@@ -117,17 +117,17 @@ class MaintenanceScreen {
     /**
      * Makes MaintenanceScreen instance from config file
      *
-     * @param string              $configFile        Config file name
-     * @param ConfigurationLoader $configLoader      Config files loader
-     * @param ConfigurationLoader $translatorsLoader Translator config files loader
-     * @param \Twig_Environment   $twig              Twig
+     * @param string                           $configFile         Config file name
+     * @param ConfigurationLoader              $configLoader       Config files loader
+     * @param TranslatorProviderInterface|null $translatorProvider Translator provider
+     * @param \Twig_Environment|null           $twig               Twig
      *
      * @return static Maked instance
      */
     public static function makeFromConfigFiles(
         string $configFile,
         ConfigurationLoader $configLoader,
-        $translatorsLoader = null,
+        $translatorProvider = null,
         $twig = null
     ) {
         if (is_null($twig)) {
@@ -141,19 +141,21 @@ class MaintenanceScreen {
             throw new \InvalidArgumentException('Twig must be a Twig_Environment');
         }
 
-        if (is_null($translatorsLoader)) {
-            $translatorsLoader = new ConfigurationLoader(
-                [__DIR__.'/Resources/translations']
+        if (is_null($translatorProvider)) {
+            $translatorProvider = new FilesystemTranslatorProvider(
+                new ConfigurationLoader(
+                    [__DIR__.'/Resources/translations']
+                )
             );
         }
 
-        if (!is_a($translatorsLoader, ConfigurationLoader::class, true)) {
-            throw new \InvalidArgumentException('Translators loader must be a ConfigurationLoader');
+        if (!is_a($translatorProvider, TranslatorProviderInterface::class, true)) {
+            throw new \InvalidArgumentException('Translator provider must be a TranslatorProviderInterface');
         }
 
         return new static(
             $configLoader->loadFile($configFile),
-            new FilesystemTranslatorProvider($translatorsLoader),
+            $translatorProvider,
             $twig
         );
     }

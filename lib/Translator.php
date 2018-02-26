@@ -81,16 +81,4 @@ class Translator {
 
         return $this->translations[$key];
     }
-
-    /**
-     * Makes Translator instance from config file
-     *
-     * @param string              $configFile   Config file name
-     * @param ConfigurationLoader $configLoader Configuration loader
-     *
-     * @return static Maked instance
-     */
-    public static function fromConfigFile(string $configFile, ConfigurationLoader $configLoader) {
-        return new static($configLoader->loadFile($configFile));
-    }
 }

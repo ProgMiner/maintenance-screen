@@ -64,14 +64,15 @@ class ConfigurationLoader {
             $loaders,
             [new YamlConfigurationLoader($this->fileLocator)]
         ));
+
         $this->loader = new DelegatingLoader($this->resolver);
     }
 
     /**
      * Loads config file by name
      *
-     * @param string                 $filename      Filename
-     * @param string|null            $currentPath   Current path
+     * @param string      $filename    Filename
+     * @param string|null $currentPath Current path
      *
      * @return mixed Processed file
      */
