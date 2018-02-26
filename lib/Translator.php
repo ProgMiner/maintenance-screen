@@ -92,11 +92,11 @@ class Translator {
      * @return static Maked instance
      */
     public static function fromConfigFile(string $configFile, ConfigurationLoader $configLoader) {
-        $translations = $configLoader->loadFile($configFile);
-
-        $this->translations = (new Processor())->processConfiguration(
+        $translations = (new Processor())->processConfiguration(
             new TranslatorConfiguration(),
-            [$translations]
+            [$configLoader->loadFile($configFile)]
         );
+
+        return new static($translations);
     }
 }
