@@ -34,7 +34,7 @@ use Symfony\Component\Config\FileLocator;
 class PhpTemplateRenderer implements TemplateRendererInterface {
 
     /**
-     * @var FileLocator $fileLocator File locator for template files
+     * @var FileLocator File locator for template files
      */
     protected $fileLocator;
 

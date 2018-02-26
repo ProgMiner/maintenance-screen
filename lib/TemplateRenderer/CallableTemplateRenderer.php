@@ -25,29 +25,40 @@ SOFTWARE. */
 namespace MaintenanceScreen;
 
 /**
- * Template renderer for Twig templates
+ * Template renderer for callable templates
  *
  * @author ProgMiner
  */
-class TwigTemplateRenderer implements TemplateRendererInterface {
+class CallableTemplateRenderer implements TemplateRendererInterface {
 
     /**
-     * @var \Twig_Environment Twig
+     * @var callable[] Templates
      */
-    protected $twig;
+    protected $templates;
 
     /**
-     * @param \Twig_Environment $twig Twig
+     * @param callable[] $templates Templates
      */
-    public function __construct(\Twig_Environment $twig) {
-        $this->twig = $twig;
+    public function __construct(array $templates) {
+        $this->templates = $templates;
     }
 
     /**
      * {@inheritdoc}
      */
     public function render(string $template, array $variables): string {
-        return $this->twig->render($template, $variables);
+        if (!isset($this->templates[$template])) {
+            throw new \RuntimeException("Template {$template} is undefined");
+        }
+
+        ob_start();
+        
+        $this->templates[$template]($variables);
+
+        $ret = ob_get_contents();
+        ob_end_clean();
+
+        return $ret;
     }
 
     /**
@@ -56,6 +67,9 @@ class TwigTemplateRenderer implements TemplateRendererInterface {
     public function supports(string $template): bool {
         $ext = pathinfo($template, PATHINFO_EXTENSION);
 
-        return 'twig' === $ext;
+        return (
+            'php' === $ext ||
+            'phtml' === $ext
+        );
     }
 }

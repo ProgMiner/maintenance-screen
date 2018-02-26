@@ -41,11 +41,26 @@ class Translator {
     protected $translations;
 
     /**
+     * @var string Language name
+     */
+    protected $language;
+
+    /**
      * @param array  $translations Array with translations
      * @param string $language     Language name
      */
     public function __construct(array $translations, string $language) {
         $this->translations = $translations;
+        $this->language = $language;
+    }
+
+    /**
+     * Returns language name
+     *
+     * @return string
+     */
+    public function getLanguage(): string {
+        return $this->language;
     }
 
     /**
