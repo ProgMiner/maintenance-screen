@@ -13,7 +13,7 @@ The "Maintenance mode" screen library
 ### Installation
 
 ```bash
-composer require progminer/maintenance-screen
+composer require progminer/maintenance-screen maintenance-screen dev-config-splitting
 ```
 
 ### Usage
@@ -37,18 +37,32 @@ $config = [
     'default_language' => 'en',      // uses if Accept-Language is not provided
     'charset'          => 'utf-8'    // not required
 ];
+```
 
-$translatorsLoader = new ConfigurationLoader(
-    [__DIR__.'/Resources/translations'], // Array with paths to loading translation files (not required)
-    []                                   // Array with not included in library loaders (not required)
-);
+Here you have to make `TranslatorProviderInterface` instance
+and you have two included methods:
+- Use translations from array (`TranslatorProvider` class)
+- Use translations from config files (`FilesystemTranslatorProvider` class)
 
+A simple example for first method here:
+```php
+$translatorsProvider = new TranslatorProvider([
+    'en' => ['title' => 'Title', 'text' => 'Text'],
+    'ru' => ['title' => 'Заголовок', 'text' => 'Текст']
+]);
+```
+
+Now you must make a `\Twig_Environment` instance:
+```php
 // Twig_Environment
 $twig = new \Twig_Environment(
     new \Twig_Loader_Filesystem([__DIR__.'/Resources/templates'], __DIR__),
     ['cache' => __DIR__.'/Resources/twig_cache']
 );
+```
 
+And, finally, [`MaintenanceScreen\MaintenanceScreen`](https://progminer.github.io/maintenance-screen/MaintenanceScreen/MaintenanceScreen.html) instance:
+```php
 $maintenanceScreen = new MaintenanceScreen(
     $config,
     new TranslatorProvider($translatorsLoader),
