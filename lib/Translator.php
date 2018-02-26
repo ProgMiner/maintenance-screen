@@ -88,15 +88,20 @@ class Translator {
      *
      * @param string              $configFile   Config file name
      * @param ConfigurationLoader $configLoader Configuration loader
+     * @param string|null         $language     Language name, if not provided will use filename (w/o extenstion)
      *
      * @return static Maked instance
      */
-    public static function fromConfigFile(string $configFile, ConfigurationLoader $configLoader) {
+    public static function fromConfigFile(string $configFile, ConfigurationLoader $configLoader, $language = null) {
         $translations = (new Processor())->processConfiguration(
             new TranslatorConfiguration(),
             [$configLoader->loadFile($configFile)]
         );
 
-        return new static($translations);
+        if (is_null($language)) {
+            $language = pathinfo($configFile, PATHINFO_FILENAME);
+        }
+
+        return new static($translations, (string) $language);
     }
 }
