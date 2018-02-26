@@ -30,6 +30,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
 /**
  * ConfigurationInterface implementation for translations
+ * !ONLY FOR FILES!
  *
  * @author ProgMiner
  */
@@ -45,15 +46,6 @@ class TranslatorConfiguration implements ConfigurationInterface {
         $rootNode->
             fixXmlConfig('translation')->
             useAttributeAsKey('key')->
-            children()->
-
-                scalarNode('lang')->
-                    isRequired()->
-                    cannotBeEmpty()->
-                end()->
-
-            end()->
-
             arrayPrototype()->
                 children()->
 

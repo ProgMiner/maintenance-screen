@@ -40,11 +40,12 @@ class Translator {
      */
     protected $translations;
 
-    public function __construct(array $translations) {
-        $this->translations = (new Processor())->processConfiguration(
-            new TranslatorConfiguration(),
-            [$translations]
-        );
+    /**
+     * @param array  $translations Array with translations
+     * @param string $language     Language name
+     */
+    public function __construct(array $translations, string $language) {
+        $this->translations = $translations;
     }
 
     /**
@@ -80,5 +81,22 @@ class Translator {
         }
 
         return $this->translations[$key];
+    }
+
+    /**
+     * Makes Translator instance from config file
+     *
+     * @param string              $configFile   Config file name
+     * @param ConfigurationLoader $configLoader Configuration loader
+     *
+     * @return static Maked instance
+     */
+    public static function fromConfigFile(string $configFile, ConfigurationLoader $configLoader) {
+        $translations = $configLoader->loadFile($configFile);
+
+        $this->translations = (new Processor())->processConfiguration(
+            new TranslatorConfiguration(),
+            [$translations]
+        );
     }
 }

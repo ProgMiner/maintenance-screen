@@ -60,6 +60,6 @@ class FilesystemTranslatorProvider implements TranslatorProviderInterface {
             $lang .= '.yml';
         }
 
-        return new Translator($this->configLoader->loadFile($lang));
+        return Translator::fromConfigFile($lang, $this->configLoader);
     }
 }

@@ -29,7 +29,7 @@ namespace MaintenanceScreen;
  *
  * @author ProgMiner
  */
-class TranslatorProvider {
+class TranslatorProvider implements TranslatorProviderInterface {
     use TranslatorProviderTrait;
 
     /**
