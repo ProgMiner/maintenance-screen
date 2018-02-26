@@ -24,34 +24,42 @@ SOFTWARE. */
 
 namespace MaintenanceScreen;
 
+use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
+
 /**
- * Array-based Translator instances provider
+ * Provides Translator instances
+ * from directories with config files
  *
  * @author ProgMiner
  */
-class TranslatorProvider {
+class FilesystemTranslatorProvider implements TranslatorProviderInterface {
     use TranslatorProviderTrait;
 
     /**
-     * @var array Array of languages and their translations
+     * @var ConfigurationLoader Configuration loader
      */
-    protected $languages;
+    protected $configLoader;
 
     /**
-     * @param array $langs Array of languages and their translations
+     * @param ConfigurationLoader $configLoader Translator config files loader
      */
-    public function __construct(array $langs) {
-        $this->languages = $langs;
+    public function __construct(ConfigurationLoader $configLoader) {
+        $this->configLoader = $configLoader;
     }
 
     /**
-     * {@inheritdoc}
+     * Makes Translator from config file
+     *
+     * @param string $lang     Language name
+     * @param bool   $fileName Use language name as full filename?
+     *
+     * @return Translator
      */
-    public function _getTranslator(string $lang): Translator {
-        if (!isset($this->languages[$lang])) {
-            throw new \RuntimeException("Language \"{$lang}\" is not provided");
+    public function _getTranslator(string $lang, bool $fileName = false): Translator {
+        if ($fileName) {
+            return Translator::fromConfigFile($lang, $this->configLoader);
         }
 
-        return new Translator($this->languages[$lang]);
+        return Translator::fromConfigFile("$lang.yml", $this->configLoader);
     }
 }

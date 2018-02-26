@@ -27,6 +27,8 @@ namespace MaintenanceScreen;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
+use Symfony\Component\Config\Definition\Processor;
+
 use MaintenanceScreen\Configurations\MainConfiguration;
 
 /**
@@ -42,7 +44,7 @@ class MaintenanceScreen {
     protected $config;
 
     /**
-     * @var TranslatorProvider Translator provider
+     * @var TranslatorProviderInterface Translator provider
      */
     protected $translatorProvider;
 
@@ -53,11 +55,15 @@ class MaintenanceScreen {
 
     /**
      * @param array              $config             Configurations array
-     * @param TranslatorProvider $translatorProvider Translator provider
+     * @param TranslatorProviderInterface $translatorProvider Translator provider
      * @param \Twig_Environment  $twig               Twig environment instance
      */
-    public function __construct(array $config, TranslatorProvider $translatorProvider, \Twig_Environment $twig) {
-        $this->config = $config;
+    public function __construct(array $config, TranslatorProviderInterface $translatorProvider, \Twig_Environment $twig) {
+        $this->config = (new Processor())->processConfiguration(
+            new MainConfiguration(),
+            [$config]
+        );
+
         $this->translatorProvider = $translatorProvider;
         $this->twig = $twig;
     }
@@ -76,7 +82,8 @@ class MaintenanceScreen {
         $request = self::checkRequest($request);
 
         $translator = $this->translatorProvider->getPreferredTranslator(
-            array_merge($request->getLanguages(), [$this->config['default_language']])
+            $request->getLanguages(),
+            $this->config['default_language']
         );
 
         $response = new Response();
@@ -117,7 +124,7 @@ class MaintenanceScreen {
      *
      * @return static Maked instance
      */
-    public static function makeFrom(
+    public static function makeFromConfigFiles(
         string $configFile,
         ConfigurationLoader $configLoader,
         $translatorsLoader = null,
@@ -145,8 +152,8 @@ class MaintenanceScreen {
         }
 
         return new static(
-            $configLoader->loadFile($configFile, new MainConfiguration()),
-            new TranslatorProvider($translatorsLoader),
+            $configLoader->loadFile($configFile),
+            new FilesystemTranslatorProvider($translatorsLoader),
             $twig
         );
     }

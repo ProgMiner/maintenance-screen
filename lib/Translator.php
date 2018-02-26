@@ -24,6 +24,8 @@ SOFTWARE. */
 
 namespace MaintenanceScreen;
 
+use Symfony\Component\Config\Definition\Processor;
+
 use MaintenanceScreen\Configurations\TranslatorConfiguration;
 
 /**
@@ -39,7 +41,10 @@ class Translator {
     protected $translations;
 
     public function __construct(array $translations) {
-        $this->translations = $translations;
+        $this->translations = (new Processor())->processConfiguration(
+            new TranslatorConfiguration(),
+            [$translations]
+        );
     }
 
     /**
@@ -86,11 +91,6 @@ class Translator {
      * @return static Maked instance
      */
     public static function fromConfigFile(string $configFile, ConfigurationLoader $configLoader) {
-        $translations = $configLoader->loadFile(
-            $configFile,
-            new TranslatorConfiguration()
-        );
-
-        return new static($translations);
+        return new static($configLoader->loadFile($configFile));
     }
 }

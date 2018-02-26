@@ -38,14 +38,14 @@ class YamlConfigurationLoader extends FileLoader {
     /**
      * {@inheritdoc}
      */
-    public function load($resource) {
+    public function load($resource, $type = null) {
         return Yaml::parse(file_get_contents($resource));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supports($resource) {
+    public function supports($resource, $type = null) {
         $ext = pathinfo($resource, PATHINFO_EXTENSION);
 
         return is_string($resource) && 

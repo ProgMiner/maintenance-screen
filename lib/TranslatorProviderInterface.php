@@ -25,33 +25,28 @@ SOFTWARE. */
 namespace MaintenanceScreen;
 
 /**
- * Array-based Translator instances provider
+ * Interface for Translator instances providers
  *
  * @author ProgMiner
  */
-class TranslatorProvider {
-    use TranslatorProviderTrait;
+interface TranslatorProviderInterface {
 
     /**
-     * @var array Array of languages and their translations
+     * Makes Translator for language
+     *
+     * @param string $lang Language name
+     *
+     * @return Translator
      */
-    protected $languages;
+    public function getTranslator(string $lang): Translator;
 
     /**
-     * @param array $langs Array of languages and their translations
+     * Makes Translator for preferred language
+     *
+     * @param array       $langs Languages ordered by preference
+     * @param string|null $defaultLang Default language
+     *
+     * @return Translator
      */
-    public function __construct(array $langs) {
-        $this->languages = $langs;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function _getTranslator(string $lang): Translator {
-        if (!isset($this->languages[$lang])) {
-            throw new \RuntimeException("Language \"{$lang}\" is not provided");
-        }
-
-        return new Translator($this->languages[$lang]);
-    }
+    public function getPreferredTranslator(array $langs, $defaultLang = null): Translator;
 }

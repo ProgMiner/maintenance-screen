@@ -29,10 +29,6 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderResolver;
 use Symfony\Component\Config\Loader\DelegatingLoader;
 
-use Symfony\Component\Config\Definition\Processor;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Symfony\Component\Config\Definition\Exception\Exception as ConfigException;
-
 use MaintenanceScreen\ConfigurationLoaders\YamlConfigurationLoader;
 
 /**
@@ -58,11 +54,6 @@ class ConfigurationLoader {
     protected $loader;
 
     /**
-     * @var Processor Processor
-     */
-    protected $processor;
-
-    /**
      * @param array $configDirs Directories to load configuration files
      * @param array $loaders    Additional configuration loaders
      */
@@ -74,72 +65,19 @@ class ConfigurationLoader {
             [new YamlConfigurationLoader($this->fileLocator)]
         ));
         $this->loader = new DelegatingLoader($this->resolver);
-
-        $this->processor = new Processor();
     }
 
     /**
      * Loads config file by name
      *
      * @param string                 $filename      Filename
-     * @param ConfigurationInterface $configuration Configuration
      * @param string|null            $currentPath   Current path
      *
      * @return mixed Processed file
      */
-    public function loadFile(string $filename, ConfigurationInterface $configuration, $currentPath = null) {
-        $config = $this->loader->load(
+    public function loadFile(string $filename, $currentPath = null) {
+        return $this->loader->load(
             $this->fileLocator->locate($filename, $currentPath, true)
         );
-
-        $config = $this->processor->processConfiguration(
-            $configuration,
-            [$config]
-        );
-
-        return $config;
-    }
-
-    /**
-     * Loads config files by name while function returns true
-     *
-     * @param string                 $filename      Filename
-     * @param ConfigurationInterface $configuration Configuration
-     * @param callable               $func          Function
-     * @param string|null            $currentPath   Current path
-     *
-     * @return mixed Processed file
-     */
-    public function loadFileWhile(string $filename, ConfigurationInterface $configuration, callable $func, $currentPath = null) {
-        $files = $this->fileLocator->locate($filename, $currentPath, false);
-        $loader = $this->resolver->resolve($files[0]);
-
-        $configs = [];
-        $processedConfig = [];
-        $lastException = null;
-        foreach ($files as $file) {
-            $config = $loader->load($file);
-
-            array_unshift($configs, $config);
-
-            try {
-                $processedConfig = $this->processor->processConfiguration(
-                    $configuration,
-                    $configs
-                );
-
-                if (!$func($file, $processedConfig, $configs)) {
-                    break;
-                }
-            } catch (ConfigException $e) {
-                $lastException = $e;
-            }
-        }
-
-        if (!is_null($lastException) && empty($processedConfig)) {
-            throw $lastException;
-        }
-
-        return $processedConfig;
     }
 }
