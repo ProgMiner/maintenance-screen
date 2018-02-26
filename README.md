@@ -7,6 +7,7 @@ The "Maintenance mode" screen library
 
 - [Installation](#installation)
 - [Usage](#usage)
+  - [Example](#example)
 - [Documentation](#documentation)
 - [Todo](#todo)
 
@@ -27,6 +28,8 @@ If you needs to making you own application based on this library, please use sou
 - In second case you need to create an instance of [`MaintenanceScreen\MaintenanceScreen`](https://progminer.github.io/maintenance-screen/MaintenanceScreen/MaintenanceScreen.html) using constructor (regular method) or [`MaintenanceScreen\MaintenanceScreen::makeFrom`](https://progminer.github.io/maintenance-screen/MaintenanceScreen/MaintenanceScreen.html#method_makeFrom) (if you have a special configuration file).
 
 Here is a regular second case method example:
+
+#### Example
 ```php
 use MaintenanceScreen\MaintenanceScreen;
 use MaintenanceScreen\TranslatorProvider;
