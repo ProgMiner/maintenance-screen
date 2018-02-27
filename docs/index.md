@@ -1,3 +1,8 @@
+---
+title: Maintenance screen
+permalink: index.html
+---
+
 # Maintenance Screen
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/1124b9270e0145fd9b61ff1d19a822ac)](https://www.codacy.com/app/ProgMiner/maintenance-screen?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ProgMiner/maintenance-screen&amp;utm_campaign=Badge_Grade)
