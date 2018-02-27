@@ -31,5 +31,10 @@
     "config": {
         "optimize-autoloader": true,
         "sort-packages": true
+    },
+    "scripts": {
+        "sami-install": [
+            "curl -O http://get.sensiolabs.org/sami.phar"
+        ]
     }
 }
