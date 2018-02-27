@@ -16,8 +16,8 @@ $iterator = Finder::create()->
     in($dir = 'lib');
 
 $versions = GitVersionCollection::create($dir)->
-    addFromTags('v*.*')->addFromTags('v*.*.*')->
-    add('master', 'master branch');
+    add('master', 'master branch')->
+    addFromTags('v*.*');
 
 return new Sami($iterator, [
     'title'             => 'Maintenance screen API',
