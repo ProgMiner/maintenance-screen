@@ -133,7 +133,7 @@ class MaintenanceScreen {
      *
      * @return static Maked instance
      */
-    public static function makeFromConfigFile(
+    public static function fromConfigFile(
         string $configFile,
         ConfigurationLoader $configLoader,
         $translatorProvider = null,
