@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="robots" content="index, follow, all" />
-    <title>Search | Maintenance screen API</title>
+    <title>MaintenanceScreen | Maintenance screen API</title>
 
             <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css">
@@ -19,7 +19,7 @@
     
     </head>
 
-    <body id="search-page" data-name="" data-root-path="">
+    <body id="namespace" data-name="namespace:MaintenanceScreen" data-root-path="">
             <div id="content">
         <div id="left-column">
                 <div id="control-panel">
@@ -76,85 +76,56 @@
         </div>
     </nav>
 
-                        <div id="page-content">
+                <div class="namespace-breadcrumbs">
+        <ol class="breadcrumb">
+            <li><span class="label label-default">Namespace</span></li>
+                    <li><a href="MaintenanceScreen.html">MaintenanceScreen</a></li><li class="backslash">\</li>
+        </ol>
+    </div>
+            <div id="page-content">
                 
     <div class="page-header">
-        <h1>Search</h1>
+        <h1>MaintenanceScreen</h1>
     </div>
 
-    <p>This page allows you to search through the API documentation for
-    specific terms. Enter your search words into the box below and click
-    "submit". The search will be performed on namespaces, classes, interfaces,
-    traits, functions, and methods.</p>
-
-    <form class="form-inline" role="form" action="search.html" method="GET">
-        <div class="form-group">
-            <label class="sr-only" for="search">Search</label>
-            <input type="search" class="form-control" name="search" id="search" placeholder="Search">
-        </div>
-        <button type="submit" class="btn btn-default">submit</button>
-    </form>
-
-    <h2>Search Results</h2>
-
-    <div class="container-fluid">
-        <ul class="search-results"></ul>
-    </div>
-
-        <script type="text/javascript">
-
-        (function() {
-            var term = Sami.cleanSearchTerm();
-
-            if (!term) {
-                $('h2').hide();
-                return;
-            }
-
-            $('#search').val(term);
-            var container = $('.search-results');
-            var results = Sami.search(term);
-            var len = results.length;
-
-            if (len == 0) {
-                container.html('No results were found');
-                return;
-            }
-
-            for (var i = 0, text_content = ''; i < len; i++) {
-
-                var ele = results[i];
-                var contents = '<li><h2 class="clearfix">';
-                var class_name = Sami.getSearchClass(ele.type);
-                contents += '<a href="' + ele.link + '">' + ele.name + '</a>';
-                contents += '<div class="search-type type-' + ele.type + '"><span class="pull-right label ' + class_name + '">' + ele.type + '</span></div>';
-                contents += '</h2>';
-
-                if (ele.fromName && ele.fromLink) {
-                    contents += '<div class="search-from">from <a href="' + ele.fromLink + '">' + ele.fromName + '</a></div>';
-                }
-
-                contents += '<div class="search-description">';
-
-                // Add description, decode entities, and strip wrapping quotes
-                if (ele.doc) {
-                    text_content = $('<p>' + ele.doc + '</p>').text();
-                    if (text_content[0] == '"') {
-                        text_content = text_content.substring(1);
-                    }
-                    if (text_content[text_content.length - 1] == '"') {
-                        text_content = text_content.substring(0, text_content.length - 1);
-                    }
-                    contents += text_content;
-                }
-
-                contents += '</div></li>';
-                container.append($(contents));
-            }
-        })();
-    </script>
-
-
+            <h2>Namespaces</h2>
+        <div class="namespace-list">
+            <a href="MaintenanceScreen/Configurations.html">MaintenanceScreen\Configurations</a><a href="MaintenanceScreen/FileLoader.html">MaintenanceScreen\FileLoader</a><a href="MaintenanceScreen/TemplateRenderer.html">MaintenanceScreen\TemplateRenderer</a><a href="MaintenanceScreen/TranslatorProvider.html">MaintenanceScreen\TranslatorProvider</a>        </div>
+    
+            <h2>Classes</h2>
+        
+    <div class="container-fluid underlined">
+                    <div class="row">
+                <div class="col-md-6">
+                                            <a href="MaintenanceScreen/ConfigurationLoader.html"><abbr title="MaintenanceScreen\ConfigurationLoader">ConfigurationLoader</abbr></a>
+                                            
+                </div>
+                <div class="col-md-6">
+                    Configuraion loader
+                </div>
+            </div>
+                    <div class="row">
+                <div class="col-md-6">
+                                            <a href="MaintenanceScreen/MaintenanceScreen.html"><abbr title="MaintenanceScreen\MaintenanceScreen">MaintenanceScreen</abbr></a>
+                                            
+                </div>
+                <div class="col-md-6">
+                    Main class
+                </div>
+            </div>
+                    <div class="row">
+                <div class="col-md-6">
+                                            <a href="MaintenanceScreen/Translator.html"><abbr title="MaintenanceScreen\Translator">Translator</abbr></a>
+                                            
+                </div>
+                <div class="col-md-6">
+                    Translates to some language
+                </div>
+            </div>
+            </div>
+    
+    
+    
             </div>
                 <div id="footer">
         Generated by <a href="http://sami.sensiolabs.org/">Sami, the API Documentation Generator</a>.
