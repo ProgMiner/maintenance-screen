@@ -16,8 +16,7 @@ $iterator = Finder::create()->
     in($dir = 'lib');
 
 $versions = GitVersionCollection::create($dir)->
-    addFromTags('v1.*.*')->
-    addFromTags('v2.0')->
+    addFromTags('v*.*')->addFromTags('v*.*.*')->
     add('twig-splitting', 'twig-splitting branch')->
     add('master', 'master branch');
 
