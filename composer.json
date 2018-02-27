@@ -35,11 +35,6 @@
     "scripts": {
         "sami-install": [
             "curl -O http://get.sensiolabs.org/sami.phar"
-        ],
-
-        "sami-update": [
-            "@composer run-script sami -- update -- sami-config.php"
-        ],
-        "sami": "@php sami.phar"
+        ]
     }
 }
