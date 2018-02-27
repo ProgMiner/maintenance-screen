@@ -1,6 +1,6 @@
 ---
 title: Maintenance screen
-permalink: index.html
+permalink: 
 ---
 
 # Maintenance Screen
