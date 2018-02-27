@@ -22,45 +22,49 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-namespace MaintenanceScreen\Configurations;
-
-use Symfony\Component\Config\Definition\ConfigurationInterface;
-
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+namespace MaintenanceScreen\TemplateRenderer;
 
 /**
- * ConfigurationInterface implementation for translations
- * !ONLY FOR FILES!
+ * Template renderer for callable templates
  *
  * @author ProgMiner
  */
-class TranslatorConfiguration implements ConfigurationInterface {
+class CallableTemplateRenderer implements TemplateRendererInterface {
+
+    /**
+     * @var callable[] Templates
+     */
+    protected $templates;
+
+    /**
+     * @param callable[] $templates Templates
+     */
+    public function __construct(array $templates) {
+        $this->templates = $templates;
+    }
 
     /**
      * {@inheritdoc}
      */
-    public function getConfigTreeBuilder() {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('translations');
+    public function render(string $template, array $variables): string {
+        if (!isset($this->templates[$template])) {
+            throw new \RuntimeException("Template {$template} is undefined");
+        }
 
-        $rootNode->
-            fixXmlConfig('translation')->
-            useAttributeAsKey('key')->
-            arrayPrototype()->
-                children()->
+        ob_start();
+        
+        $this->templates[$template]($variables);
 
-                    scalarNode('text')->
-                        isRequired()->
-                    end()->
+        $ret = ob_get_contents();
+        ob_end_clean();
 
-                end()->
-                validate()->
-                    always(function($node) { return $node['text']; })->
-                end()->
-
-            end();
-
-        return $treeBuilder;
+        return $ret;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function supports(string $template): bool {
+        return true;
+    }
 }

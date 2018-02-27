@@ -22,45 +22,33 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-namespace MaintenanceScreen\Configurations;
+namespace MaintenanceScreen\TranslatorProvider;
 
-use Symfony\Component\Config\Definition\ConfigurationInterface;
-
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use MaintenanceScreen\Translator;
 
 /**
- * ConfigurationInterface implementation for translations
- * !ONLY FOR FILES!
+ * Interface for Translator instances providers
  *
  * @author ProgMiner
  */
-class TranslatorConfiguration implements ConfigurationInterface {
+interface TranslatorProviderInterface {
 
     /**
-     * {@inheritdoc}
+     * Makes Translator for language
+     *
+     * @param string $lang Language name
+     *
+     * @return Translator
      */
-    public function getConfigTreeBuilder() {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('translations');
+    public function getTranslator(string $lang): Translator;
 
-        $rootNode->
-            fixXmlConfig('translation')->
-            useAttributeAsKey('key')->
-            arrayPrototype()->
-                children()->
-
-                    scalarNode('text')->
-                        isRequired()->
-                    end()->
-
-                end()->
-                validate()->
-                    always(function($node) { return $node['text']; })->
-                end()->
-
-            end();
-
-        return $treeBuilder;
-    }
-
+    /**
+     * Makes Translator for preferred language
+     *
+     * @param array       $langs Languages ordered by preference
+     * @param string|null $defaultLang Default language
+     *
+     * @return Translator
+     */
+    public function getPreferredTranslator(array $langs, $defaultLang = null): Translator;
 }

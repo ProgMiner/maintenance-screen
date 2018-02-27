@@ -22,45 +22,38 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-namespace MaintenanceScreen\Configurations;
+namespace MaintenanceScreen\TranslatorProvider;
 
-use Symfony\Component\Config\Definition\ConfigurationInterface;
-
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use MaintenanceScreen\Translator;
 
 /**
- * ConfigurationInterface implementation for translations
- * !ONLY FOR FILES!
+ * Array-based Translator instances provider
  *
  * @author ProgMiner
  */
-class TranslatorConfiguration implements ConfigurationInterface {
+class ArrayTranslatorProvider implements TranslatorProviderInterface {
+    use TranslatorProviderTrait;
+
+    /**
+     * @var array Array of languages and their translations
+     */
+    protected $languages;
+
+    /**
+     * @param array $langs Array of languages and their translations
+     */
+    public function __construct(array $langs) {
+        $this->languages = $langs;
+    }
 
     /**
      * {@inheritdoc}
      */
-    public function getConfigTreeBuilder() {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('translations');
+    protected function _getTranslator(string $lang): Translator {
+        if (!isset($this->languages[$lang])) {
+            throw new \RuntimeException("Language \"{$lang}\" is not provided");
+        }
 
-        $rootNode->
-            fixXmlConfig('translation')->
-            useAttributeAsKey('key')->
-            arrayPrototype()->
-                children()->
-
-                    scalarNode('text')->
-                        isRequired()->
-                    end()->
-
-                end()->
-                validate()->
-                    always(function($node) { return $node['text']; })->
-                end()->
-
-            end();
-
-        return $treeBuilder;
+        return new Translator($this->languages[$lang], $lang);
     }
-
 }

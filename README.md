@@ -7,6 +7,7 @@ The "Maintenance mode" screen library
 
 - [Installation](#installation)
 - [Usage](#usage)
+  - [Example](#example)
 - [Documentation](#documentation)
 - [Todo](#todo)
 
@@ -24,45 +25,63 @@ You can use this library for full or particional site closing.
 It is a base application based on this library.
 If you needs to making you own application based on this library, please use sources from the above mentioned project.
 
-- In second case you need to create an instance of [`MaintenanceScreen\MaintenanceScreen`](https://progminer.github.io/maintenance-screen/master/MaintenanceScreen/MaintenanceScreen.html) using constructor (regular method) or [`MaintenanceScreen\MaintenanceScreen::makeFrom`](https://progminer.github.io/maintenance-screen/master/MaintenanceScreen/MaintenanceScreen.html#method_makeFrom) (if you have a special configuration file).
+- In second case you need to create an instance of [`MaintenanceScreen\MaintenanceScreen`](https://progminer.github.io/maintenance-screen/master/MaintenanceScreen/MaintenanceScreen.html) using constructor (regular method)
+or [`MaintenanceScreen\MaintenanceScreen::makeFrom`](https://progminer.github.io/maintenance-screen/master/MaintenanceScreen/MaintenanceScreen#method_makeFrom.html) (if you have a special configuration file).
 
 Here is a regular second case method example:
+
+#### Example
 ```php
 use MaintenanceScreen\MaintenanceScreen;
-use MaintenanceScreen\TranslatorProvider;
 use MaintenanceScreen\ConfigurationLoader;
 
+use MaintenanceScreen\TranslatorProvider\ArrayTranslatorProvider;
+
 $config = [
-    'template_name'    => 'Default', // template name
-    'default_language' => 'en',      // uses if Accept-Language is not provided
+    'template_name'    => 'Default', // template name, not required
+    'default_language' => 'en',      // uses if Accept-Language is not provided, not required
     'charset'          => 'utf-8'    // not required
 ];
-
-$translatorsLoader = new ConfigurationLoader(
-    [__DIR__.'/Resources/translations'], // Array with paths to loading translation files (not required)
-    []                                   // Array with not included in library loaders (not required)
-);
-
-// Twig_Environment
-$twig = new \Twig_Environment(
-    new \Twig_Loader_Filesystem([__DIR__.'/Resources/templates'], __DIR__),
-    ['cache' => __DIR__.'/Resources/twig_cache']
-);
-
-$maintenanceScreen = new MaintenanceScreen(
-    $config,
-    new TranslatorProvider($translatorsLoader),
-    $twig
-);
 ```
 
-When you have an instance of [`MaintenanceScreen\MaintenanceScreen`](https://progminer.github.io/maintenance-screen/master/MaintenanceScreen/MaintenanceScreen.html) you can render and/or send rendered `Response`:
+Here you have to make [`MaintenanceScreen\TranslatorProvider\TranslatorProviderInterface`](https://progminer.github.io/maintenance-screen/master/MaintenanceScreen/TranslatorProvider/TranslatorProviderInterface.html) instance
+and you have two included methods:
+- Use translations from array ([`MaintenanceScreen\TranslatorProvider\ArrayTranslatorProvider`](https://progminer.github.io/maintenance-screen/master/MaintenanceScreen/TranslatorProvider/ArrayTranslatorProvider.html) class)
+- Use translations from config files ([`MaintenanceScreen\TranslatorProvider\FilesystemTranslatorProvider`](https://progminer.github.io/maintenance-screen/master/MaintenanceScreen/TranslatorProvider/FilesystemTranslatorProvider.html) class)
+
+A simple example for first method here:
+```php
+$translatorsProvider = new ArrayTranslatorProvider([
+    'en' => ['title' => 'Site in maintenance mode', 'text' => 'Site in maintenance mode'],
+    'ru' => ['title' => 'Сайт в режиме техобслуживания', 'text' => 'Сайт в режиме техобслуживания']
+]);
+```
+
+Now you have to make a [`MaintenanceScreen\TemplateRenderer\TemplateRendererInterface`](https://progminer.github.io/maintenance-screen/master/MaintenanceScreen/TemplateRenderer/TemplateRendererInterface.html) instance,
+for example, [`MaintenanceScreen\TemplateRenderer\CallableTemplateRenderer`](https://progminer.github.io/maintenance-screen/master/MaintenanceScreen/TemplateRenderer/CallableTemplateRenderer.html):
+```php
+$templateRenderer = new CallableTemplateRenderer([
+    'Default' => function($vars) { ?>
+
+<html lang="<?=$vars['lang']?>">
+    <head><title><?=$vars['title']?></title></head>
+    <body><h1><center><?=$vars['text']?></center></h1></body>
+</html>
+
+    <?php }
+]);
+```
+
+And, finally, [`MaintenanceScreen\MaintenanceScreen`](https://progminer.github.io/maintenance-screen/master/MaintenanceScreen/MaintenanceScreen.html) instance:
+```php
+$maintenanceScreen = new MaintenanceScreen($config, $translatorProvider, $templateRenderer);
+```
+
+When you have an instance of [`MaintenanceScreen\MaintenanceScreen`](https://progminer.github.io/maintenance-screen/master/MaintenanceScreen/MaintenanceScreen.html)
+you can render and/or send rendered `\Symfony\Component\HttpFoundation\Response`:
 
 - Rendering:
 ```php
-/**
- * @var \Symfony\Component\HttpFoundation\Response
- */
 $response = $maintenanceScreen->render();
 ```
 - Sending:
@@ -71,13 +90,13 @@ $maintenanceScreen->send();
 ```
 
 Both methods have not required argument `$request` - instance of class `\Symfony\Component\HttpFoundation\Request`.
-If it is not provided methods calls a `Request::createFromGlobals` method for getting current request.
+If it is not provided methods calls a `\Symfony\Component\HttpFoundation\Request::createFromGlobals` method for getting current request.
 
 ### Documentation
 
-Autogenerated documentation is available [here](https://progminer.github.io/maintenance-screen/master/).
+Autogenerated documentation is available [here](https://progminer.github.io/maintenance-screen/master/index.html).
 
 ### Todo
 
-- Make library separated from configuration files needing (`twig-splitting` branch)
-- Make library separated from templates format (`twig-splitting` branch)
+- Add more file loaders
+- Add more translations

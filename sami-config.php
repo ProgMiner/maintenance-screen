@@ -17,7 +17,6 @@ $iterator = Finder::create()->
 
 $versions = GitVersionCollection::create($dir)->
     addFromTags('v*.*')->addFromTags('v*.*.*')->
-    add('twig-splitting', 'twig-splitting branch')->
     add('master', 'master branch');
 
 return new Sami($iterator, [

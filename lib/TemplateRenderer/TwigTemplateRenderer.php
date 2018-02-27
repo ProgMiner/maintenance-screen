@@ -22,45 +22,40 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-namespace MaintenanceScreen\Configurations;
-
-use Symfony\Component\Config\Definition\ConfigurationInterface;
-
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+namespace MaintenanceScreen\TemplateRenderer;
 
 /**
- * ConfigurationInterface implementation for translations
- * !ONLY FOR FILES!
+ * Template renderer for Twig templates
  *
  * @author ProgMiner
  */
-class TranslatorConfiguration implements ConfigurationInterface {
+class TwigTemplateRenderer implements TemplateRendererInterface {
+
+    /**
+     * @var \Twig_Environment Twig
+     */
+    protected $twig;
+
+    /**
+     * @param \Twig_Environment $twig Twig
+     */
+    public function __construct(\Twig_Environment $twig) {
+        $this->twig = $twig;
+    }
 
     /**
      * {@inheritdoc}
      */
-    public function getConfigTreeBuilder() {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('translations');
-
-        $rootNode->
-            fixXmlConfig('translation')->
-            useAttributeAsKey('key')->
-            arrayPrototype()->
-                children()->
-
-                    scalarNode('text')->
-                        isRequired()->
-                    end()->
-
-                end()->
-                validate()->
-                    always(function($node) { return $node['text']; })->
-                end()->
-
-            end();
-
-        return $treeBuilder;
+    public function render(string $template, array $variables): string {
+        return $this->twig->render($template, $variables);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function supports(string $template): bool {
+        $ext = pathinfo($template, PATHINFO_EXTENSION);
+
+        return 'twig' === $ext;
+    }
 }

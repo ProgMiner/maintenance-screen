@@ -22,45 +22,56 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-namespace MaintenanceScreen\Configurations;
+namespace MaintenanceScreen\TemplateRenderer;
 
-use Symfony\Component\Config\Definition\ConfigurationInterface;
-
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\FileLocator;
 
 /**
- * ConfigurationInterface implementation for translations
- * !ONLY FOR FILES!
+ * Template renderer for PHP templates
  *
  * @author ProgMiner
  */
-class TranslatorConfiguration implements ConfigurationInterface {
+class PhpTemplateRenderer implements TemplateRendererInterface {
+
+    /**
+     * @var FileLocator File locator for template files
+     */
+    protected $fileLocator;
+
+    /**
+     * @param FileLocator $fileLocator File locator for template files
+     */
+    public function __construct(FileLocator $fileLocator) {
+        $this->fileLocator = $fileLocator;
+    }
 
     /**
      * {@inheritdoc}
      */
-    public function getConfigTreeBuilder() {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('translations');
+    public function render(string $template, array $variables): string {
+        $file = $this->fileLocator->locate($template, null, true);
 
-        $rootNode->
-            fixXmlConfig('translation')->
-            useAttributeAsKey('key')->
-            arrayPrototype()->
-                children()->
+        ob_start();
+        (function() use($file, $variables) {
+            extract($variables);
 
-                    scalarNode('text')->
-                        isRequired()->
-                    end()->
+            require $file;
+        })();
+        $ret = ob_get_contents();
+        ob_end_clean();
 
-                end()->
-                validate()->
-                    always(function($node) { return $node['text']; })->
-                end()->
-
-            end();
-
-        return $treeBuilder;
+        return $ret;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function supports(string $template): bool {
+        $ext = pathinfo($template, PATHINFO_EXTENSION);
+
+        return (
+            'php' === $ext ||
+            'phtml' === $ext
+        );
+    }
 }

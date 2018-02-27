@@ -24,6 +24,8 @@ SOFTWARE. */
 
 namespace MaintenanceScreen;
 
+use Symfony\Component\Config\Definition\Processor;
+
 use MaintenanceScreen\Configurations\TranslatorConfiguration;
 
 /**
@@ -38,8 +40,27 @@ class Translator {
      */
     protected $translations;
 
-    public function __construct(array $translations) {
+    /**
+     * @var string Language name
+     */
+    protected $language;
+
+    /**
+     * @param array  $translations Array with translations
+     * @param string $language     Language name
+     */
+    public function __construct(array $translations, string $language) {
         $this->translations = $translations;
+        $this->language = $language;
+    }
+
+    /**
+     * Returns language name
+     *
+     * @return string
+     */
+    public function getLanguage(): string {
+        return $this->language;
     }
 
     /**
@@ -82,15 +103,20 @@ class Translator {
      *
      * @param string              $configFile   Config file name
      * @param ConfigurationLoader $configLoader Configuration loader
+     * @param string|null         $language     Language name, if not provided will use filename (w/o extenstion)
      *
      * @return static Maked instance
      */
-    public static function fromConfigFile(string $configFile, ConfigurationLoader $configLoader) {
-        $translations = $configLoader->loadFile(
-            $configFile,
-            new TranslatorConfiguration()
+    public static function fromConfigFile(string $configFile, ConfigurationLoader $configLoader, $language = null) {
+        $translations = (new Processor())->processConfiguration(
+            new TranslatorConfiguration(),
+            [$configLoader->loadFile($configFile)]
         );
 
-        return new static($translations);
+        if (is_null($language)) {
+            $language = pathinfo($configFile, PATHINFO_FILENAME);
+        }
+
+        return new static($translations, (string) $language);
     }
 }

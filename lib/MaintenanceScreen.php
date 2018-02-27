@@ -27,7 +27,15 @@ namespace MaintenanceScreen;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
+use Symfony\Component\Config\Definition\Processor;
+
 use MaintenanceScreen\Configurations\MainConfiguration;
+
+use MaintenanceScreen\TranslatorProvider\TranslatorProviderInterface;
+use MaintenanceScreen\TranslatorProvider\ArrayTranslatorProvider;
+
+use MaintenanceScreen\TemplateRenderer\TemplateRendererInterface;
+use MaintenanceScreen\TemplateRenderer\CallableTemplateRenderer;
 
 /**
  * Main class
@@ -42,24 +50,28 @@ class MaintenanceScreen {
     protected $config;
 
     /**
-     * @var TranslatorProvider Translator provider
+     * @var TranslatorProviderInterface Translator provider
      */
     protected $translatorProvider;
 
     /**
-     * @var Twig_Environment Twig
+     * @var TemplateRendererInterface Template renderer
      */
-    protected $twig;
+    protected $templateRenderer;
 
     /**
-     * @param array              $config             Configurations array
-     * @param TranslatorProvider $translatorProvider Translator provider
-     * @param \Twig_Environment  $twig               Twig environment instance
+     * @param array                       $config             Configurations array
+     * @param TranslatorProviderInterface $translatorProvider Translator provider
+     * @param TemplateRendererInterface   $templateRenderer   Template renderer
      */
-    public function __construct(array $config, TranslatorProvider $translatorProvider, \Twig_Environment $twig) {
-        $this->config = $config;
+    public function __construct(array $config, TranslatorProviderInterface $translatorProvider, TemplateRendererInterface $templateRenderer) {
+        $this->config = (new Processor())->processConfiguration(
+            new MainConfiguration(),
+            [$config]
+        );
+
         $this->translatorProvider = $translatorProvider;
-        $this->twig = $twig;
+        $this->templateRenderer = $templateRenderer;
     }
 
     /**
@@ -76,14 +88,18 @@ class MaintenanceScreen {
         $request = self::checkRequest($request);
 
         $translator = $this->translatorProvider->getPreferredTranslator(
-            array_merge($request->getLanguages(), [$this->config['default_language']])
+            $request->getLanguages(),
+            $this->config['default_language']
         );
 
         $response = new Response();
 
-        $response->setContent($this->twig->render(
+        $response->setContent($this->templateRenderer->render(
             $this->config['template_name'],
-            array_merge($translator->getTranslations(), ['charset' => $this->config['charset']])
+            array_merge($translator->getTranslations(), [
+                'lang' => $translator->getLanguage(),
+                'charset' => $this->config['charset']
+            ])
         )."\n<!-- Powered by progminer/maintenance-screen (https://packagist.org/packages/progminer/maintenance-screen) -->\n");
         $response->headers->set('Content-Language', $translator->translate('lang'));
 
@@ -110,44 +126,55 @@ class MaintenanceScreen {
     /**
      * Makes MaintenanceScreen instance from config file
      *
-     * @param string              $configFile        Config file name
-     * @param ConfigurationLoader $configLoader      Config files loader
-     * @param ConfigurationLoader $translatorsLoader Translator config files loader
-     * @param \Twig_Environment   $twig              Twig
+     * @param string                           $configFile         Config file name
+     * @param ConfigurationLoader              $configLoader       Config files loader
+     * @param TranslatorProviderInterface|null $translatorProvider Translator provider
+     * @param TemplateRendererInterface|null   $templateRenderer   Template renderer
      *
      * @return static Maked instance
      */
-    public static function makeFrom(
+    public static function fromConfigFile(
         string $configFile,
         ConfigurationLoader $configLoader,
-        $translatorsLoader = null,
-        $twig = null
+        $translatorProvider = null,
+        $templateRenderer = null
     ) {
-        if (is_null($twig)) {
-            $twig = new \Twig_Environment(
-                new \Twig_Loader_Filesystem([__DIR__.'/Resources/templates'], __DIR__),
-                ['cache' => __DIR__.'/Resources/twig_cache']
-            );
+        if (is_null($translatorProvider)) {
+            $translatorProvider = new ArrayTranslatorProvider(['en' => [
+                'title' => 'Site in maintenance mode',
+                'text'  => 'Site in maintenance mode'
+            ]]);
         }
 
-        if (!is_a($twig, \Twig_Environment::class, true)) {
-            throw new \InvalidArgumentException('Twig must be a Twig_Environment');
+        if (!is_a($translatorProvider, TranslatorProviderInterface::class, true)) {
+            throw new \InvalidArgumentException('Translator provider must be a '.TranslatorProviderInterface::class);
         }
 
-        if (is_null($translatorsLoader)) {
-            $translatorsLoader = new ConfigurationLoader(
-                [__DIR__.'/Resources/translations']
-            );
+        if (is_null($templateRenderer)) {
+            $templateRenderer = new CallableTemplateRenderer([
+                'Default' => function($vars) { ?>
+<!DOCTYPE html>
+<html lang="<?=$vars['lang']?>">
+    <head>
+        <title><?=$vars['title']?></title>
+        <meta charset="<?=$vars['charset']?>">
+    </head>
+    <body>
+        <h1><center><?=$vars['text']?></center></h1>
+    </body>
+</html>
+                <?php }
+            ]);
         }
 
-        if (!is_a($translatorsLoader, ConfigurationLoader::class, true)) {
-            throw new \InvalidArgumentException('Translators loader must be a ConfigurationLoader');
+        if (!is_a($templateRenderer, TemplateRendererInterface::class, true)) {
+            throw new \InvalidArgumentException('Template renderer must be a '.TemplateRendererInterface::class);
         }
 
         return new static(
-            $configLoader->loadFile($configFile, new MainConfiguration()),
-            new TranslatorProvider($translatorsLoader),
-            $twig
+            (array) $configLoader->loadFile($configFile),
+            $translatorProvider,
+            $templateRenderer
         );
     }
 
@@ -157,7 +184,7 @@ class MaintenanceScreen {
         }
 
         if (!is_a($request, Request::class, true)) {
-            throw new \InvalidArgumentException('Request must be a Request');
+            throw new \InvalidArgumentException('Request must be a '.Request::class);
         }
 
         return $request;

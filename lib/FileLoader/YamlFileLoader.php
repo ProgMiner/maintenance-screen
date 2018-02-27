@@ -22,45 +22,35 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-namespace MaintenanceScreen\Configurations;
+namespace MaintenanceScreen\FileLoader;
 
-use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Loader\FileLoader;
 
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Yaml\Yaml;
 
 /**
- * ConfigurationInterface implementation for translations
- * !ONLY FOR FILES!
+ * Yaml configuration loader
  *
  * @author ProgMiner
  */
-class TranslatorConfiguration implements ConfigurationInterface {
+class YamlFileLoader extends FileLoader {
 
     /**
      * {@inheritdoc}
      */
-    public function getConfigTreeBuilder() {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('translations');
-
-        $rootNode->
-            fixXmlConfig('translation')->
-            useAttributeAsKey('key')->
-            arrayPrototype()->
-                children()->
-
-                    scalarNode('text')->
-                        isRequired()->
-                    end()->
-
-                end()->
-                validate()->
-                    always(function($node) { return $node['text']; })->
-                end()->
-
-            end();
-
-        return $treeBuilder;
+    public function load($resource, $type = null) {
+        return Yaml::parse(file_get_contents($resource));
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function supports($resource, $type = null) {
+        $ext = pathinfo($resource, PATHINFO_EXTENSION);
+
+        return is_string($resource) && (
+            'yaml' === $ext ||
+            'yml' === $ext
+        );
+    }
 }

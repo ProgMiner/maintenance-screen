@@ -22,45 +22,31 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-namespace MaintenanceScreen\Configurations;
-
-use Symfony\Component\Config\Definition\ConfigurationInterface;
-
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+namespace MaintenanceScreen\TemplateRenderer;
 
 /**
- * ConfigurationInterface implementation for translations
- * !ONLY FOR FILES!
+ * Interface for different template engines
  *
  * @author ProgMiner
  */
-class TranslatorConfiguration implements ConfigurationInterface {
+interface TemplateRendererInterface {
 
     /**
-     * {@inheritdoc}
+     * Renders template by name and provides variables to them
+     *
+     * @param string $template  Template name
+     * @param array  $variables Variables array
+     *
+     * @return string Rendered template
      */
-    public function getConfigTreeBuilder() {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('translations');
+    public function render(string $template, array $variables): string;
 
-        $rootNode->
-            fixXmlConfig('translation')->
-            useAttributeAsKey('key')->
-            arrayPrototype()->
-                children()->
-
-                    scalarNode('text')->
-                        isRequired()->
-                    end()->
-
-                end()->
-                validate()->
-                    always(function($node) { return $node['text']; })->
-                end()->
-
-            end();
-
-        return $treeBuilder;
-    }
-
+    /**
+     * Returns whether this renderer supports the template
+     *
+     * @param string $template Template name
+     *
+     * @return bool True if this class supports the given template, false otherwise
+     */
+    public function supports(string $template): bool;
 }
