@@ -1,8 +1,12 @@
 <?php
 
 use Sami\Sami;
-use Sami\RemoteRepository\GitHubRemoteRepository;
+
 use Symfony\Component\Finder\Finder;
+
+use Sami\Version\GitVersionCollection;
+
+use Sami\RemoteRepository\GitHubRemoteRepository;
 
 $iterator = Finder::create()->
     files()->
@@ -11,11 +15,21 @@ $iterator = Finder::create()->
     exclude('Resources')->
     in($dir = 'lib');
 
+$versions = GitVersionCollection::create($dir)->
+    addFromTags('v1.*.*')->
+    addFromTags('v2.0')->
+    add('twig-splitting', 'twig-splitting branch')->
+    add('master', 'master branch');
+
 return new Sami($iterator, [
     'title'             => 'Maintenance screen API',
 
-    'build_dir'         => __DIR__.'/docs',
-    'cache_dir'         => __DIR__.'/sami-cache',
+    'versions'          => $versions,
+    'build_dir'         => __DIR__.'/docs/%version%',
+    'cache_dir'         => __DIR__.'/sami-cache/%version%',
 
-    'remote_repository' => new GitHubRemoteRepository('progminer/maintenance-screen', dirname($dir))
+    'remote_repository' => new GitHubRemoteRepository(
+        'progminer/maintenance-screen',
+        dirname($dir)
+    )
 ]);
