@@ -98,5 +98,6 @@ Documentation is unavailable now except code commentaries.
 
 ### Todo
 
+- Add delegating template loader
 - Add more translations
 - Add more file loaders
