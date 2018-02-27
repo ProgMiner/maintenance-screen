@@ -14,7 +14,7 @@ The "Maintenance mode" screen library
 ### Installation
 
 ```bash
-composer require progminer/maintenance-screen maintenance-screen dev-config-splitting
+composer require progminer/maintenance-screen
 ```
 
 ### Usage
@@ -25,8 +25,8 @@ You can use this library for full or particional site closing.
 It is a base application based on this library.
 If you needs to making you own application based on this library, please use sources from the above mentioned project.
 
-- In second case you need to create an instance of [`MaintenanceScreen\MaintenanceScreen`](https://progminer.github.io/maintenance-screen/twig-splitting/MaintenanceScreen/MaintenanceScreen.html) using constructor (regular method)
-or [`MaintenanceScreen\MaintenanceScreen::makeFrom`](https://progminer.github.io/maintenance-screen/twig-splitting/MaintenanceScreen/MaintenanceScreen#method_makeFrom.html) (if you have a special configuration file).
+- In second case you need to create an instance of [`MaintenanceScreen\MaintenanceScreen`](https://progminer.github.io/maintenance-screen/master/MaintenanceScreen/MaintenanceScreen.html) using constructor (regular method)
+or [`MaintenanceScreen\MaintenanceScreen::makeFrom`](https://progminer.github.io/maintenance-screen/master/MaintenanceScreen/MaintenanceScreen#method_makeFrom.html) (if you have a special configuration file).
 
 Here is a regular second case method example:
 
@@ -38,40 +38,46 @@ use MaintenanceScreen\ConfigurationLoader;
 use MaintenanceScreen\TranslatorProvider\ArrayTranslatorProvider;
 
 $config = [
-    'template_name'    => 'Default', // template name
-    'default_language' => 'en',      // uses if Accept-Language is not provided
+    'template_name'    => 'Default', // template name, not required
+    'default_language' => 'en',      // uses if Accept-Language is not provided, not required
     'charset'          => 'utf-8'    // not required
 ];
 ```
 
-Here you have to make [`MaintenanceScreen\TranslatorProvider\TranslatorProviderInterface`](https://progminer.github.io/maintenance-screen/twig-splitting/MaintenanceScreen/TranslatorProvider/TranslatorProviderInterface.html) instance
+Here you have to make [`MaintenanceScreen\TranslatorProvider\TranslatorProviderInterface`](https://progminer.github.io/maintenance-screen/master/MaintenanceScreen/TranslatorProvider/TranslatorProviderInterface.html) instance
 and you have two included methods:
-- Use translations from array ([`MaintenanceScreen\TranslatorProvider\ArrayTranslatorProvider`](https://progminer.github.io/maintenance-screen/twig-splitting/MaintenanceScreen/TranslatorProvider/ArrayTranslatorProvider.html) class)
-- Use translations from config files ([`MaintenanceScreen\TranslatorProvider\FilesystemTranslatorProvider`](https://progminer.github.io/maintenance-screen/twig-splitting/MaintenanceScreen/TranslatorProvider/FilesystemTranslatorProvider.html) class)
+- Use translations from array ([`MaintenanceScreen\TranslatorProvider\ArrayTranslatorProvider`](https://progminer.github.io/maintenance-screen/master/MaintenanceScreen/TranslatorProvider/ArrayTranslatorProvider.html) class)
+- Use translations from config files ([`MaintenanceScreen\TranslatorProvider\FilesystemTranslatorProvider`](https://progminer.github.io/maintenance-screen/master/MaintenanceScreen/TranslatorProvider/FilesystemTranslatorProvider.html) class)
 
 A simple example for first method here:
 ```php
 $translatorsProvider = new ArrayTranslatorProvider([
-    'en' => ['title' => 'Title', 'text' => 'Text'],
-    'ru' => ['title' => 'Заголовок', 'text' => 'Текст']
+    'en' => ['title' => 'Site in maintenance mode', 'text' => 'Site in maintenance mode'],
+    'ru' => ['title' => 'Сайт в режиме техобслуживания', 'text' => 'Сайт в режиме техобслуживания']
 ]);
 ```
 
-Now you must make a `\Twig_Environment` instance:
+Now you have to make a [`MaintenanceScreen\TemplateRenderer\TemplateRendererInterface`](https://progminer.github.io/maintenance-screen/master/MaintenanceScreen/TemplateRenderer/TemplateRendererInterface.html) instance,
+for example, [`MaintenanceScreen\TemplateRenderer\CallableTemplateRenderer`](https://progminer.github.io/maintenance-screen/master/MaintenanceScreen/TemplateRenderer/CallableTemplateRenderer.html):
 ```php
-// Twig_Environment
-$twig = new \Twig_Environment(
-    new \Twig_Loader_Filesystem([__DIR__.'/Resources/templates'], __DIR__),
-    ['cache' => __DIR__.'/Resources/twig_cache']
-);
+$templateRenderer = new CallableTemplateRenderer([
+    'Default' => function($vars) { ?>
+
+<html lang="<?=$vars['lang']?>">
+    <head><title><?=$vars['title']?></title></head>
+    <body><h1><center><?=$vars['text']?></center></h1></body>
+</html>
+
+    <?php }
+]);
 ```
 
-And, finally, [`MaintenanceScreen\MaintenanceScreen`](https://progminer.github.io/maintenance-screen/twig-splitting/MaintenanceScreen/MaintenanceScreen.html) instance:
+And, finally, [`MaintenanceScreen\MaintenanceScreen`](https://progminer.github.io/maintenance-screen/master/MaintenanceScreen/MaintenanceScreen.html) instance:
 ```php
-$maintenanceScreen = new MaintenanceScreen($config, $translatorProvider, $twig);
+$maintenanceScreen = new MaintenanceScreen($config, $translatorProvider, $templateRenderer);
 ```
 
-When you have an instance of [`MaintenanceScreen\MaintenanceScreen`](https://progminer.github.io/maintenance-screen/twig-splitting/MaintenanceScreen/MaintenanceScreen.html)
+When you have an instance of [`MaintenanceScreen\MaintenanceScreen`](https://progminer.github.io/maintenance-screen/master/MaintenanceScreen/MaintenanceScreen.html)
 you can render and/or send rendered `\Symfony\Component\HttpFoundation\Response`:
 
 - Rendering:
@@ -88,9 +94,9 @@ If it is not provided methods calls a `\Symfony\Component\HttpFoundation\Request
 
 ### Documentation
 
-Autogenerated documentation is available [here](https://progminer.github.io/maintenance-screen/twig-splitting/twig-splitting/).
+Autogenerated documentation is available [here](https://progminer.github.io/maintenance-screen/master/index.html).
 
 ### Todo
 
-- Make library separated from configuration files needing
-- Make library separated from templates format
+- Add more file loaders
+- Add more translations
