@@ -16,7 +16,9 @@ $iterator = Finder::create()->
     in($dir = __DIR__.'/lib');
 
 $versions = GitVersionCollection::create($dir)->
-    addFromTags('v*')->
+    addFromTags('v1.*')->
+    addFromTags('v2.*')->
+    addFromTags('v3.*')->
     add('master', 'master branch');
 
 return new Sami($iterator, [
