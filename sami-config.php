@@ -13,10 +13,10 @@ $iterator = Finder::create()->
     name('*.php')->
     exclude('Tests')->
     exclude('Resources')->
-    in($dir = 'lib');
+    in($dir = __DIR__.'/lib');
 
 $versions = GitVersionCollection::create($dir)->
-    addFromTags('v?.*')->
+    addFromTags('v*')->
     add('master', 'master branch');
 
 return new Sami($iterator, [
