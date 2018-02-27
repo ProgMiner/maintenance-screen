@@ -1,7 +1,4 @@
 /composer.lock
 /vendor/
 
-/sami-cache/
-/sami.phar
-
 .*.sw?
