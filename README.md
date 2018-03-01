@@ -17,20 +17,30 @@ The "Maintenance mode" screen library
 composer require progminer/maintenance-screen
 ```
 
+For using some included classes you also need to install more requrements:
+
+- For [`MaintenanceScreen\TemplateRenderer\TwigTemplateRenderer`](lib/TemplateRenderer/TwigTemplateRenderer.php) perform the:
+```bash
+composer require twig/twig ^2.4
+```
+- For [`MaintenanceScreen\FileLoader\YamlFileLoader`](lib/FileLoader/YamlFileLoader.php) perform the:
+```bash
+composer require symfony/yaml ^4.0
+```
+
 ### Usage
 
-You can use this library for full or particional site closing.
+An instance of [`MaintenanceScreen\MaintenanceScreen`](lib/MaintenanceScreen.php) consists of configurations array,
+[`MaintenanceScreen\TranslatorProvider\TranslatorProviderInterface`](lib/TranslatorProvider/TranslatorProviderInterface.php) instance
+and [`MaintenanceScreen\TemplateRenderer\TemplateRendererInterface`](lib/TemplateRenderer/TemplateRendererInterface.php) instance.
 
-- In first case we recommended you to use the [`maintenance-screen-project`](https://packagist.org/packages/progminer/maintenance-screen-project).
-It is a base application based on this library.
-If you needs to making you own application based on this library, please use sources from the above mentioned project.
-
-- In second case you need to create an instance of [`MaintenanceScreen\MaintenanceScreen`](lib/MaintenanceScreen.php) using constructor (regular method)
-or [`MaintenanceScreen\MaintenanceScreen::fromConfigFile`](lib/MaintenanceScreen.php#L136) (if you have a special configuration file).
-
-Here is a regular second case method example:
+This example step by step illustrates how to make a [`MaintenanceScreen\MaintenanceScreen`](lib/MaintenanceScreen.php) instance:
 
 #### Example
+
+In first order you have to write uses, include a `vendor/autoload.php` (ommited), etc.
+Also you could make configuration array for [`MaintenanceScreen\MaintenanceScreen`](lib/MaintenanceScreen.php).
+
 ```php
 use MaintenanceScreen\MaintenanceScreen;
 use MaintenanceScreen\ConfigurationLoader;
@@ -98,5 +108,4 @@ Documentation is unavailable now except code commentaries.
 
 ### Todo
 
-- Add more translations
 - Add more file loaders
