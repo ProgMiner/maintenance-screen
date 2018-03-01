@@ -56,6 +56,16 @@ class TwigTemplateRenderer implements TemplateRendererInterface {
     public function supports(string $template): bool {
         $ext = pathinfo($template, PATHINFO_EXTENSION);
 
-        return 'twig' === $ext;
+        if ('twig' !== $ext) {
+            return false;
+        }
+
+        try {
+            $this->twig->loadTemplate($template);
+        } catch (\Twig_Error $e) {
+            return false;
+        }
+
+        return true;
     }
 }

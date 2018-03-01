@@ -24,65 +24,48 @@ SOFTWARE. */
 
 namespace MaintenanceScreen\TemplateRenderer;
 
-use Symfony\Component\Config\FileLocator;
-
-use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
-
 /**
- * Template renderer for PHP templates
+ * Template renderer for different templates
  *
  * @author ProgMiner
  */
-class PhpTemplateRenderer implements TemplateRendererInterface {
+class DelegatingTemplateRenderer implements TemplateRendererInterface {
 
     /**
-     * @var FileLocator File locator for template files
+     * @var TemplateRendererInterface[] Template renderers
      */
-    protected $fileLocator;
+    protected $templateRenderers;
 
     /**
-     * @param FileLocator $fileLocator File locator for template files
+     * @param TemplateRendererInterface[] $templateRenderers Template renderers
      */
-    public function __construct(FileLocator $fileLocator) {
-        $this->fileLocator = $fileLocator;
+    public function __construct(array $templateRenderers) {
+        $this->templateRenderers = $templateRenderers;
     }
 
     /**
      * {@inheritdoc}
      */
     public function render(string $template, array $variables): string {
-        $file = $this->fileLocator->locate($template, null, true);
+        foreach ($this->templateRenderers as $renderer) {
+            if ($renderer->supports($template)) {
+                return $renderer->render($template, $variables);
+            }
+        }
 
-        ob_start();
-        (function() use($file, $variables) {
-            extract($variables);
-            require $file;
-        })();
-        $ret = ob_get_contents();
-        ob_end_clean();
-
-        return $ret;
+        throw new \RuntimeException("Tenplate \"{$template}\" is not supported");
     }
 
     /**
      * {@inheritdoc}
      */
     public function supports(string $template): bool {
-        $ext = pathinfo($template, PATHINFO_EXTENSION);
-
-        if (
-            'php' !== $ext &&
-            'phtml' !== $ext
-        ) {
-            return false;
+        foreach ($this->templateRenderers as $renderer) {
+            if ($renderer->supports($template)) {
+                return true;
+            }
         }
 
-        try {
-            $this->fileLocator->locate($template, null, true);
-        } catch (FileLocatorFileNotFoundException $e) {
-            return false;
-        }
-
-        return true;
+        return false;
     }
 }

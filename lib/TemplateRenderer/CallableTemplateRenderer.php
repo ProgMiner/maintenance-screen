@@ -48,7 +48,7 @@ class CallableTemplateRenderer implements TemplateRendererInterface {
      */
     public function render(string $template, array $variables): string {
         if (!isset($this->templates[$template])) {
-            throw new \RuntimeException("Template {$template} is undefined");
+            throw new \RuntimeException("Template \"{$template}\" is not supported");
         }
 
         ob_start();
@@ -65,6 +65,6 @@ class CallableTemplateRenderer implements TemplateRendererInterface {
      * {@inheritdoc}
      */
     public function supports(string $template): bool {
-        return true;
+        return isset($this->templates[$template]);
     }
 }
