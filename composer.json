@@ -12,9 +12,9 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
+        "progminer/util-template-renderer": "^0.1.0@alpha",
         "symfony/config": "^4.0",
-        "symfony/http-foundation": "^4.0",
-        "progminer/util-template-renderer": "dev-master"
+        "symfony/http-foundation": "^4.0"
     },
     "require-dev": {
         "symfony/yaml": "^4.0",
