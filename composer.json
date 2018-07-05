@@ -13,7 +13,8 @@
     "prefer-stable": true,
     "require": {
         "symfony/config": "^4.0",
-        "symfony/http-foundation": "^4.0"
+        "symfony/http-foundation": "^4.0",
+        "progminer/util-template-renderer": "dev-master"
     },
     "require-dev": {
         "symfony/yaml": "^4.0",

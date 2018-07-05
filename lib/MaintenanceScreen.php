@@ -34,8 +34,8 @@ use MaintenanceScreen\Configurations\MainConfiguration;
 use MaintenanceScreen\TranslatorProvider\TranslatorProviderInterface;
 use MaintenanceScreen\TranslatorProvider\ArrayTranslatorProvider;
 
-use MaintenanceScreen\TemplateRenderer\TemplateRendererInterface;
-use MaintenanceScreen\TemplateRenderer\CallableTemplateRenderer;
+use ProgMinerUtils\TemplateRenderer\ITemplateRenderer;
+use ProgMinerUtils\TemplateRenderer\CallableTemplateRenderer;
 
 /**
  * Main class
@@ -55,16 +55,16 @@ class MaintenanceScreen {
     protected $translatorProvider;
 
     /**
-     * @var TemplateRendererInterface Template renderer
+     * @var ITemplateRenderer Template renderer
      */
     protected $templateRenderer;
 
     /**
      * @param array                       $config             Configurations array
      * @param TranslatorProviderInterface $translatorProvider Translator provider
-     * @param TemplateRendererInterface   $templateRenderer   Template renderer
+     * @param ITemplateRenderer           $templateRenderer   Template renderer
      */
-    public function __construct(array $config, TranslatorProviderInterface $translatorProvider, TemplateRendererInterface $templateRenderer) {
+    public function __construct(array $config, TranslatorProviderInterface $translatorProvider, ITemplateRenderer $templateRenderer) {
         $this->config = (new Processor())->processConfiguration(
             new MainConfiguration(),
             [$config]
@@ -129,7 +129,7 @@ class MaintenanceScreen {
      * @param string                           $configFile         Config file name
      * @param ConfigurationLoader              $configLoader       Config files loader
      * @param TranslatorProviderInterface|null $translatorProvider Translator provider
-     * @param TemplateRendererInterface|null   $templateRenderer   Template renderer
+     * @param ITemplateRenderer|null           $templateRenderer   Template renderer
      *
      * @return static Maked instance
      */
@@ -167,8 +167,8 @@ class MaintenanceScreen {
             ]);
         }
 
-        if (!is_a($templateRenderer, TemplateRendererInterface::class, true)) {
-            throw new \InvalidArgumentException('Template renderer must be a '.TemplateRendererInterface::class);
+        if (!is_a($templateRenderer, ITemplateRenderer::class, true)) {
+            throw new \InvalidArgumentException('Template renderer must be a '.ITemplateRenderer::class);
         }
 
         return new static(
