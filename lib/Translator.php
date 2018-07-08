@@ -36,7 +36,7 @@ use MaintenanceScreen\Configurations\TranslatorConfiguration;
 class Translator {
 
     /**
-     * @var array Translations
+     * @var string[] Translations (Key => Translation)
      */
     protected $translations;
 
@@ -66,7 +66,7 @@ class Translator {
     /**
      * Returns all translations
      *
-     * @return array
+     * @return string[] Translations (Key => Translation)
      */
     public function getTranslations(): array {
         return $this->translations;
@@ -88,35 +88,28 @@ class Translator {
      *
      * @param string $key Key
      *
-     * @return string|null Translation or null if is not exists
+     * @return string Translation or key if is not exists
      */
     public function translate(string $key) {
         if (!$this->supports($key)) {
-            return null;
+            return $key;
         }
 
         return $this->translations[$key];
     }
 
     /**
-     * Makes Translator instance from config file
+     * Makes Translator instance from config
      *
-     * @param string              $configFile   Config file name
-     * @param ConfigurationLoader $configLoader Configuration loader
-     * @param string|null         $language     Language name, if not provided will use filename (w/o extenstion)
+     * @param array  $config   Configuration array
+     * @param string $language Language name
      *
-     * @return static Maked instance
+     * @return static Made instance
      */
-    public static function fromConfigFile(string $configFile, ConfigurationLoader $configLoader, $language = null) {
-        $translations = (new Processor())->processConfiguration(
-            new TranslatorConfiguration(),
-            [$configLoader->loadFile($configFile)]
-        );
+    public static function fromConfig(array $config, string $language): Translator {
+        $translations = (new Processor())->
+            processConfiguration(new TranslatorConfiguration(), [$config]);
 
-        if (is_null($language)) {
-            $language = pathinfo($configFile, PATHINFO_FILENAME);
-        }
-
-        return new static($translations, (string) $language);
+        return new static($translations, $language);
     }
 }

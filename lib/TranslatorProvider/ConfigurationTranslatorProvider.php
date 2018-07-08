@@ -24,47 +24,43 @@ SOFTWARE. */
 
 namespace MaintenanceScreen\TranslatorProvider;
 
-use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
-
 use MaintenanceScreen\ConfigurationLoader;
 use MaintenanceScreen\Translator;
 
 /**
- * Provides Translator instances
- * from directories with config files
+ * Provides Translator instances from configs
  *
  * @author ProgMiner
  */
-class FilesystemTranslatorProvider implements TranslatorProviderInterface {
-    use TranslatorProviderTrait;
+class ConfigurationTranslatorProvider extends AbstractTranslatorProvider {
 
     /**
-     * @var ConfigurationLoader Configuration loader
+     * @var ConfigurationLoader Translator configs loader
      */
     protected $configLoader;
 
     /**
-     * @param ConfigurationLoader $configLoader Translator config files loader
+     * @param ConfigurationLoader $configLoader Translator configs loader
      */
     public function __construct(ConfigurationLoader $configLoader) {
         $this->configLoader = $configLoader;
     }
 
     /**
-     * Makes Translator from config file
+     * Makes Translator from config
      *
-     * @param string $lang     Language name
-     * @param bool   $fileName Use language name as full filename?
+     * Loads config from {@see ConfigurationTranslatorProvider::$configLoader}
+     * by language name with prefix and suffix.
+     *
+     * @param string $lang   Language name
+     * @param string $suffix Suffix for config name (default is '.yml')
+     * @param string $prefix Prefix for config name (default is '')
      *
      * @return Translator
      */
-    protected function _getTranslator(string $lang, bool $fileName = false): Translator {
-        $filename = $lang;
+    protected function _getTranslator(string $lang, string $suffix = '.yml', string $prefix = ''): Translator {
+        $name = $prefix.$lang.$suffix;
 
-        if (!$fileName) {
-            $filename .= '.yml';
-        }
-
-        return Translator::fromConfigFile($filename, $this->configLoader, $lang);
+        return Translator::fromConfig($this->configLoader->load($name), $lang);
     }
 }

@@ -31,7 +31,7 @@ use MaintenanceScreen\Translator;
  *
  * @author ProgMiner
  */
-interface TranslatorProviderInterface {
+interface ITranslatorProvider {
 
     /**
      * Makes Translator for language
@@ -45,10 +45,10 @@ interface TranslatorProviderInterface {
     /**
      * Makes Translator for preferred language
      *
-     * @param array       $langs Languages ordered by preference
-     * @param string|null $defaultLang Default language
+     * @param array  $langs       Languages ordered by preference
+     * @param string $defaultLang Default language
      *
      * @return Translator
      */
-    public function getPreferredTranslator(array $langs, $defaultLang = null): Translator;
+    public function getPreferredTranslator(array $langs, string $defaultLang = null): Translator;
 }

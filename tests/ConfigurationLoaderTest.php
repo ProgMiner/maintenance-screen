@@ -22,37 +22,33 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-namespace MaintenanceScreen\TranslatorProvider;
+use PHPUnit\Framework\TestCase;
 
-use MaintenanceScreen\Translator;
+use Symfony\Component\Config\Loader\Loader;
 
-/**
- * Array-based Translator instances provider
- *
- * @author ProgMiner
- */
-class ArrayTranslatorProvider extends AbstractTranslatorProvider {
+use MaintenanceScreen\FileLoader\YamlFileLoader;
+use MaintenanceScreen\ConfigurationLoader;
 
-    /**
-     * @var string[][] Array of languages and their translations (Language code => (Key => Translation))
-     */
-    protected $languages;
+class ConfigurationLoaderTest extends TestCase {
 
-    /**
-     * @param string[][] $langs Array of languages and their translations (Language code => (Key => Translation))
-     */
-    public function __construct(array $langs) {
-        $this->languages = $langs;
+    public function testCanHaveNotLoaders() {
+        $this->assertInstanceOf(ConfigurationLoader::class, new ConfigurationLoader([]));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function _getTranslator(string $lang): Translator {
-        if (!isset($this->languages[$lang])) {
-            throw new \RuntimeException("Language \"{$lang}\" is not provided");
-        }
+    public function testCanUseCustomFileLoaders() {
+        $loader = new ConfigurationLoader([new CustomLoader()]);
 
-        return new Translator($this->languages[$lang], $lang);
+        $this->assertEquals($loader->load('ABCD'), 'ABCD');
+    }
+}
+
+class CustomLoader extends Loader {
+
+    public function load($resource, $type = null) {
+        return $resource;
+    }
+
+    public function supports($resource, $type = null) {
+        return true;
     }
 }

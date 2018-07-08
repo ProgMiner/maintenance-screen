@@ -24,12 +24,9 @@ SOFTWARE. */
 
 namespace MaintenanceScreen;
 
-use Symfony\Component\Config\FileLocator;
-
 use Symfony\Component\Config\Loader\LoaderResolver;
+use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Loader\DelegatingLoader;
-
-use MaintenanceScreen\FileLoader\YamlFileLoader;
 
 /**
  * Configuraion loader
@@ -37,11 +34,6 @@ use MaintenanceScreen\FileLoader\YamlFileLoader;
  * @author ProgMiner
  */
 class ConfigurationLoader {
-
-    /**
-     * @var FileLocator File locator
-     */
-    protected $fileLocator;
 
     /**
      * @var LoaderResolver Resolver
@@ -54,31 +46,21 @@ class ConfigurationLoader {
     protected $loader;
 
     /**
-     * @param array $configDirs Directories to load configuration files
-     * @param array $loaders    Additional configuration loaders
+     * @param LoaderInterface[] $loaders Loaders
      */
-    public function __construct(array $configDirs = [__DIR__.'/Resources'], array $loaders = []) {
-        $this->fileLocator = new FileLocator($configDirs);
-
-        $this->resolver = new LoaderResolver(array_merge(
-            $loaders,
-            [new YamlFileLoader($this->fileLocator)]
-        ));
-
+    public function __construct(array $loaders = []) {
+        $this->resolver = new LoaderResolver($loaders);
         $this->loader = new DelegatingLoader($this->resolver);
     }
 
     /**
-     * Loads config file by name
+     * Loads config by name
      *
-     * @param string      $filename    Filename
-     * @param string|null $currentPath Current path
+     * @param string $name Name
      *
      * @return mixed Processed file
      */
-    public function loadFile(string $filename, $currentPath = null) {
-        return $this->loader->load(
-            $this->fileLocator->locate($filename, $currentPath, true)
-        );
+    public function load(string $name) {
+        return $this->loader->load($name);
     }
 }

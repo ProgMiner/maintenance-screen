@@ -27,11 +27,11 @@ namespace MaintenanceScreen\TranslatorProvider;
 use MaintenanceScreen\Translator;
 
 /**
- * Trait for Translator instances providers
+ * Abstract provider of Translator instances
  *
  * @author ProgMiner
  */
-trait TranslatorProviderTrait {
+abstract class AbstractTranslatorProvider implements ITranslatorProvider {
 
     /**
      * Makes Translator for language
@@ -56,13 +56,16 @@ trait TranslatorProviderTrait {
             $exception = $e;
         }
 
+        // If $lang is includes country code, try call self only for language code
         if (false !== ($pos = strpos($lang, '_'))) {
             try {
                 array_shift($args);
                 array_unshift($args, substr($lang, 0, $pos));
 
                 return call_user_func_array([$this, 'getTranslator'], $args);
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+                // Uninformative exception
+            }
         }
 
         throw $exception;
@@ -79,7 +82,6 @@ trait TranslatorProviderTrait {
         $args = func_get_args();
         array_shift($args);
 
-        $exception = null;
         foreach ($langs as $lang) {
             try {
                 array_shift($args);
@@ -87,10 +89,10 @@ trait TranslatorProviderTrait {
 
                 return call_user_func_array([$this, 'getTranslator'], $args);
             } catch (\Throwable $e) {
-                $exception = $e;
+                // A lot of uninformative exceptions
             }
         }
 
-        throw new \RuntimeException('No one language exists', 0, $e);
+        throw new \RuntimeException('No one language exists');
     }
 }

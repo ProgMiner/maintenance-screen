@@ -31,7 +31,7 @@ use Symfony\Component\Config\Definition\Processor;
 
 use MaintenanceScreen\Configurations\MainConfiguration;
 
-use MaintenanceScreen\TranslatorProvider\TranslatorProviderInterface;
+use MaintenanceScreen\TranslatorProvider\ITranslatorProvider;
 use MaintenanceScreen\TranslatorProvider\ArrayTranslatorProvider;
 
 use ProgMinerUtils\TemplateRenderer\ITemplateRenderer;
@@ -45,12 +45,12 @@ use ProgMinerUtils\TemplateRenderer\CallableTemplateRenderer;
 class MaintenanceScreen {
 
     /**
-     * @var array Configuration
+     * @var string[] Configuration (Key => Value)
      */
     protected $config;
 
     /**
-     * @var TranslatorProviderInterface Translator provider
+     * @var ITranslatorProvider Translator provider
      */
     protected $translatorProvider;
 
@@ -60,15 +60,13 @@ class MaintenanceScreen {
     protected $templateRenderer;
 
     /**
-     * @param array                       $config             Configurations array
-     * @param TranslatorProviderInterface $translatorProvider Translator provider
-     * @param ITemplateRenderer           $templateRenderer   Template renderer
+     * @param array               $config             Configuration array
+     * @param ITranslatorProvider $translatorProvider Translator provider
+     * @param ITemplateRenderer   $templateRenderer   Template renderer
      */
-    public function __construct(array $config, TranslatorProviderInterface $translatorProvider, ITemplateRenderer $templateRenderer) {
-        $this->config = (new Processor())->processConfiguration(
-            new MainConfiguration(),
-            [$config]
-        );
+    public function __construct(array $config, ITranslatorProvider $translatorProvider, ITemplateRenderer $templateRenderer) {
+        $this->config = (new Processor())->
+            processConfiguration(new MainConfiguration(), [$config]);
 
         $this->translatorProvider = $translatorProvider;
         $this->templateRenderer = $templateRenderer;
@@ -123,62 +121,7 @@ class MaintenanceScreen {
         send();
     }
 
-    /**
-     * Makes MaintenanceScreen instance from config file
-     *
-     * @param string                           $configFile         Config file name
-     * @param ConfigurationLoader              $configLoader       Config files loader
-     * @param TranslatorProviderInterface|null $translatorProvider Translator provider
-     * @param ITemplateRenderer|null           $templateRenderer   Template renderer
-     *
-     * @return static Maked instance
-     */
-    public static function fromConfigFile(
-        string $configFile,
-        ConfigurationLoader $configLoader,
-        $translatorProvider = null,
-        $templateRenderer = null
-    ) {
-        if (is_null($translatorProvider)) {
-            $translatorProvider = new ArrayTranslatorProvider(['en' => [
-                'title' => 'Site in maintenance mode',
-                'text'  => 'Site in maintenance mode'
-            ]]);
-        }
-
-        if (!is_a($translatorProvider, TranslatorProviderInterface::class, true)) {
-            throw new \InvalidArgumentException('Translator provider must be a '.TranslatorProviderInterface::class);
-        }
-
-        if (is_null($templateRenderer)) {
-            $templateRenderer = new CallableTemplateRenderer([
-                'Default' => function($vars) { ?>
-<!DOCTYPE html>
-<html lang="<?=$vars['lang']?>">
-    <head>
-        <title><?=$vars['title']?></title>
-        <meta charset="<?=$vars['charset']?>">
-    </head>
-    <body>
-        <h1><center><?=$vars['text']?></center></h1>
-    </body>
-</html>
-                <?php }
-            ]);
-        }
-
-        if (!is_a($templateRenderer, ITemplateRenderer::class, true)) {
-            throw new \InvalidArgumentException('Template renderer must be a '.ITemplateRenderer::class);
-        }
-
-        return new static(
-            (array) $configLoader->loadFile($configFile),
-            $translatorProvider,
-            $templateRenderer
-        );
-    }
-
-    private static function checkRequest($request): Request {
+    protected static function checkRequest($request): Request {
         if (is_null($request)) {
             return Request::createFromGlobals();
         }
