@@ -38,7 +38,7 @@ class Translator {
     /**
      * @var string[] Translations (Key => Translation)
      */
-    protected $translations;
+    protected $translations = [];
 
     /**
      * @var string Language name
@@ -46,11 +46,16 @@ class Translator {
     protected $language;
 
     /**
-     * @param array  $translations Array with translations
+     * @param array  $translations Translations (Key => Translation)
      * @param string $language     Language name
      */
     public function __construct(array $translations, string $language) {
-        $this->translations = $translations;
+        foreach ($translations as $key => $value) {
+            if (is_string($key) && is_string($value)) {
+                $this->translations[$key] = $value;
+            }
+        }
+
         $this->language = $language;
     }
 

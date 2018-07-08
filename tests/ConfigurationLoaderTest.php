@@ -35,6 +35,13 @@ class ConfigurationLoaderTest extends TestCase {
         $this->assertInstanceOf(ConfigurationLoader::class, new ConfigurationLoader([]));
     }
 
+    /**
+     * @expectedException \Throwable
+     */
+    public function testCanHaveOnlyLoaders() {
+        new ConfigurationLoader([(object) []]);
+    }
+
     public function testCanUseCustomFileLoaders() {
         $loader = new ConfigurationLoader([new CustomLoader1()]);
 
