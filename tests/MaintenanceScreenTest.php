@@ -44,16 +44,7 @@ class MaintenanceScreenTest extends TestCase {
     }
 
     public function testCanBeRendered() {
-        $config = [
-            'default_language' => 'Language_'.rand(),
-            'template_name'    => 'Template_'.rand()
-        ];
-
-        $maintenanceScreen = new MaintenanceScreen($config, new ArrayTranslatorProvider([
-            $config['default_language'] => ['content' => 'Test']
-        ]), new CallableTemplateRenderer([
-            $config['template_name'] => function($vars) { echo $vars['content']; }
-        ]));
+        $maintenanceScreen = $this->constructMaintenanceScreen();
 
         $this->assertTrue(
             strpos(trim($maintenanceScreen->render()->getContent()), 'Test') === 0
@@ -61,19 +52,38 @@ class MaintenanceScreenTest extends TestCase {
     }
 
     public function testCanBeRenderedWithCustomRequest() {
+        $maintenanceScreen = $this->constructMaintenanceScreen();
+
+        $this->assertTrue(
+            strpos(trim($maintenanceScreen->render(new Request())->getContent()), 'Test') === 0
+        );
+    }
+
+    public function testCanBeSended() {
+        $maintenanceScreen = $this->constructMaintenanceScreen();
+
+        ob_start();
+
+        $maintenanceScreen->send();
+
+        $sended = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertTrue(
+            strpos(trim($sended), 'Test') === 0
+        );
+    }
+
+    protected function constructMaintenanceScreen(): MaintenanceScreen {
         $config = [
             'default_language' => 'Language_'.rand(),
             'template_name'    => 'Template_'.rand()
         ];
 
-        $maintenanceScreen = new MaintenanceScreen($config, new ArrayTranslatorProvider([
+        return new MaintenanceScreen($config, new ArrayTranslatorProvider([
             $config['default_language'] => ['content' => 'Test']
         ]), new CallableTemplateRenderer([
             $config['template_name'] => function($vars) { echo $vars['content']; }
         ]));
-
-        $this->assertTrue(
-            strpos(trim($maintenanceScreen->render(new Request())->getContent()), 'Test') === 0
-        );
     }
 }
