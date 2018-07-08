@@ -1,51 +1,59 @@
-# Maintenance Screen
+# maintenance-screen
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1124b9270e0145fd9b61ff1d19a822ac)](https://www.codacy.com/app/ProgMiner/maintenance-screen?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ProgMiner/maintenance-screen&amp;utm_campaign=Badge_Grade)
-[![Maintainability](https://api.codeclimate.com/v1/badges/445ff68081083b77ff4b/maintainability)](https://codeclimate.com/github/ProgMiner/maintenance-screen/maintainability)
+[![Latest Version on Packagist][ico-version]][link-packagist]
+[![Software License][ico-license]](LICENSE.md)
+[![Build Status][ico-travis]][link-travis]
+[![Code Coverage][ico-coverage]][link-coverage]
+[![Scrutinizer Code Quality][ico-scrutinizer]][link-scrutinizer]
+[![Total Downloads][ico-downloads]][link-downloads]
 
 The "Maintenance mode" screen library
 
-- [Installation](#installation)
+- [Install](#install)
 - [Usage](#usage)
   - [Example](#example)
 - [Documentation](#documentation)
 - [Todo](#todo)
 
-### Installation
+## Install
 
-```bash
-composer require progminer/maintenance-screen
+Via Composer
+
+``` bash
+$ composer require progminer/maintenance-screen
 ```
 
 For using some included classes you also need to install more requrements:
 
-- For [`MaintenanceScreen\TemplateRenderer\TwigTemplateRenderer`](lib/TemplateRenderer/TwigTemplateRenderer.php) perform the:
-```bash
-composer require twig/twig ^2.4
-```
-- For [`MaintenanceScreen\FileLoader\YamlFileLoader`](lib/FileLoader/YamlFileLoader.php) perform the:
+- For `MaintenanceScreen\FileLoader\YamlFileLoader` perform the:
 ```bash
 composer require symfony/yaml ^4.0
 ```
+- For `ProgMinerUtils\TemplateRenderer\TwigTemplateRenderer` perform the:
+```bash
+composer require twig/twig ^2.4
+```
 
-### Usage
+## Usage
 
-An instance of [`MaintenanceScreen\MaintenanceScreen`](lib/MaintenanceScreen.php) consists of configurations array,
-[`MaintenanceScreen\TranslatorProvider\TranslatorProviderInterface`](lib/TranslatorProvider/TranslatorProviderInterface.php) instance
-and [`MaintenanceScreen\TemplateRenderer\TemplateRendererInterface`](lib/TemplateRenderer/TemplateRendererInterface.php) instance.
+An instance of `MaintenanceScreen\MaintenanceScreen` consists of configurations array,
+`MaintenanceScreen\TranslatorProvider\TranslatorProviderInterface` instance
+and `ProgMinerUtils\TemplateRenderer\TemplateRendererInterface` instance.
 
-This example step by step illustrates how to make a [`MaintenanceScreen\MaintenanceScreen`](lib/MaintenanceScreen.php) instance:
+This example step by step illustrates how to make a `MaintenanceScreen\MaintenanceScreen` instance:
 
-#### Example
+### Example
 
 In first order you have to write uses, include a `vendor/autoload.php` (ommited), etc.
-Also you could make configuration array for [`MaintenanceScreen\MaintenanceScreen`](lib/MaintenanceScreen.php).
+Also you could make configuration array for `MaintenanceScreen\MaintenanceScreen`.
 
 ```php
 use MaintenanceScreen\MaintenanceScreen;
 use MaintenanceScreen\ConfigurationLoader;
 
 use MaintenanceScreen\TranslatorProvider\ArrayTranslatorProvider;
+
+use ProgMinerUtils\TemplateRenderer\CallableTemplateRenderer;
 
 $config = [
     'template_name'    => 'Default', // template name, not required
@@ -54,10 +62,10 @@ $config = [
 ];
 ```
 
-Here you have to make [`MaintenanceScreen\TranslatorProvider\TranslatorProviderInterface`](lib/TranslatorProvider/TranslatorProviderInterface.php) instance
+Here you have to make `MaintenanceScreen\TranslatorProvider\TranslatorProviderInterface` instance
 and you have two included methods:
-- Use translations from array ([`MaintenanceScreen\TranslatorProvider\ArrayTranslatorProvider`](lib/TranslatorProvider/ArrayTranslatorProvider.php) class)
-- Use translations from config files ([`MaintenanceScreen\TranslatorProvider\FilesystemTranslatorProvider`](lib/TranslatorProvider/FilesystemTranslatorProvider.php) class)
+- Use translations from array (`MaintenanceScreen\TranslatorProvider\ArrayTranslatorProvider` class)
+- Use translations from config files (`MaintenanceScreen\TranslatorProvider\FilesystemTranslatorProvider` class)
 
 A simple example for first method here:
 ```php
@@ -67,8 +75,8 @@ $translatorsProvider = new ArrayTranslatorProvider([
 ]);
 ```
 
-Now you have to make a [`MaintenanceScreen\TemplateRenderer\TemplateRendererInterface`](lib/TemplateRenderer/TemplateRendererInterface.php) instance,
-for example, [`MaintenanceScreen\TemplateRenderer\CallableTemplateRenderer`](lib/TemplateRenderer/CallableTemplateRenderer.php):
+Now you have to make a `ProgMinerUtils\TemplateRenderer\TemplateRendererInterface` instance,
+for example, `ProgMinerUtils\TemplateRenderer\CallableTemplateRenderer`:
 ```php
 $templateRenderer = new CallableTemplateRenderer([
     'Default' => function($vars) { ?>
@@ -82,12 +90,12 @@ $templateRenderer = new CallableTemplateRenderer([
 ]);
 ```
 
-And, finally, [`MaintenanceScreen\MaintenanceScreen`](lib/MaintenanceScreen.php) instance:
+And, finally, `MaintenanceScreen\MaintenanceScreen` instance:
 ```php
 $maintenanceScreen = new MaintenanceScreen($config, $translatorProvider, $templateRenderer);
 ```
 
-When you have an instance of [`MaintenanceScreen\MaintenanceScreen`](lib/MaintenanceScreen.php)
+When you have an instance of `MaintenanceScreen\MaintenanceScreen`
 you can render and/or send rendered `\Symfony\Component\HttpFoundation\Response`:
 
 - Rendering:
@@ -102,10 +110,42 @@ $maintenanceScreen->send();
 Both methods have not required argument `$request` - instance of class `\Symfony\Component\HttpFoundation\Request`.
 If it is not provided methods calls a `\Symfony\Component\HttpFoundation\Request::createFromGlobals` method for getting current request.
 
-### Documentation
+## Documentation
 
 Documentation is unavailable now except code commentaries.
 
-### Todo
+## Todo
 
 - Add more file loaders
+
+## Contributing
+
+Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+
+## Security
+
+If you discover any security related issues, please email eridan200@mail.ru instead of using the issue tracker.
+
+## Credits
+
+- [Eridan Domoratskiy][link-author]
+- [All Contributors][link-contributors]
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+
+[ico-version]: https://img.shields.io/packagist/v/progminer/maintenance-screen.svg?style=flat
+[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat
+[ico-travis]: https://travis-ci.org/ProgMiner/maintenance-screen.svg
+[ico-coverage]: https://scrutinizer-ci.com/g/ProgMiner/maintenance-screen/badges/coverage.png
+[ico-scrutinizer]: https://scrutinizer-ci.com/g/ProgMiner/maintenance-screen/badges/quality-score.png
+[ico-downloads]: https://img.shields.io/packagist/dt/progminer/maintenance-screen.svg?style=flat
+
+[link-packagist]: https://packagist.org/packages/progminer/maintenance-screen
+[link-travis]: https://travis-ci.org/ProgMiner/maintenance-screen
+[link-coverage]: https://scrutinizer-ci.com/g/ProgMiner/maintenance-screen/
+[link-scrutinizer]: https://scrutinizer-ci.com/g/ProgMiner/maintenance-screen/
+[link-downloads]: https://packagist.org/packages/progminer/maintenance-screen
+[link-author]: https://github.com/ProgMiner
+[link-contributors]: ../../contributors

@@ -1,4 +1,6 @@
-/composer.lock
-/vendor/
+build
+vendor
+composer.phar
+composer.lock
 
 .*.sw?

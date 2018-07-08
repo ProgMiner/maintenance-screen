@@ -12,11 +12,13 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "progminer/util-template-renderer": "^0.1.0@alpha",
+        "php": "~7.0",
+        "progminer/util-template-renderer": "^1.0",
         "symfony/config": "^4.0",
         "symfony/http-foundation": "^4.0"
     },
     "require-dev": {
+        "phpunit/phpunit": "^7",
         "symfony/yaml": "^4.0",
         "twig/twig": "^2.4"
     },
@@ -34,8 +36,6 @@
         "sort-packages": true
     },
     "scripts": {
-        "sami-install": [
-            "curl -O http://get.sensiolabs.org/sami.phar"
-        ]
+        "test": "phpunit --testdox --disallow-todo-tests"
     }
 }
