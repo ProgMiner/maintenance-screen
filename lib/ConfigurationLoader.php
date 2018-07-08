@@ -48,7 +48,7 @@ class ConfigurationLoader {
     /**
      * @param LoaderInterface[] $loaders Loaders
      */
-    public function __construct(array $loaders = []) {
+    public function __construct(array $loaders) {
         $this->resolver = new LoaderResolver($loaders);
         $this->loader = new DelegatingLoader($this->resolver);
     }

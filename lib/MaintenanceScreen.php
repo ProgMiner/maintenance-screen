@@ -78,12 +78,12 @@ class MaintenanceScreen {
      * If Request is not provided uses
      * created from globals instance
      *
-     * @param Request $request Request for rendering
+     * @param Request|null $request Request for rendering
      *
      * @return Response Rendered maintenance screen
      */
-    public function render($request = null): Response {
-        $request = self::checkRequest($request);
+    public function render(Request $request = null): Response {
+        $request = self::validateRequest($request);
 
         $translator = $this->translatorProvider->getPreferredTranslator(
             $request->getLanguages(),
@@ -110,24 +110,20 @@ class MaintenanceScreen {
      * If Request is not provided uses
      * created from globals instance
      *
-     * @param Request $request Request for rendering
+     * @param Request|null $request Request for rendering
      */
-    public function send($request = null) {
-        $request = self::checkRequest($request);
+    public function send(Request $request = null) {
+        $request = self::validateRequest($request);
 
         $this->
-        render($request)->
-        prepare($request)->
-        send();
+            render($request)->
+            prepare($request)->
+            send();
     }
 
-    protected static function checkRequest($request): Request {
+    protected static function validateRequest(Request $request = null): Request {
         if (is_null($request)) {
             return Request::createFromGlobals();
-        }
-
-        if (!is_a($request, Request::class, true)) {
-            throw new \InvalidArgumentException('Request must be a '.Request::class);
         }
 
         return $request;

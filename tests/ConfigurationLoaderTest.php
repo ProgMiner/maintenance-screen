@@ -36,19 +36,29 @@ class ConfigurationLoaderTest extends TestCase {
     }
 
     public function testCanUseCustomFileLoaders() {
-        $loader = new ConfigurationLoader([new CustomLoader()]);
+        $loader = new ConfigurationLoader([new CustomLoader1()]);
 
         $this->assertEquals($loader->load('ABCD'), 'ABCD');
     }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Exception\FileLoaderLoadException
+     */
+    public function testThrowsExceptionIfCanNotLoadConfig() {
+        $loader = new ConfigurationLoader([new CustomLoader2()]);
+
+        $loader->load('ABCD');
+    }
 }
 
-class CustomLoader extends Loader {
+class CustomLoader1 extends Loader {
 
-    public function load($resource, $type = null) {
-        return $resource;
-    }
+    public function load($resource, $type = null) { return $resource; }
+    public function supports($resource, $type = null) { return true; }
+}
 
-    public function supports($resource, $type = null) {
-        return true;
-    }
+class CustomLoader2 extends Loader {
+
+    public function load($resource, $type = null) { throw new Exception($resource); }
+    public function supports($resource, $type = null) { return false; }
 }

@@ -18,7 +18,7 @@ before_script:
   - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction --prefer-dist
 
 script:
-  - vendor/bin/phpunit --testdox --disallow-todo-tests --coverage-text --coverage-clover=coverage.clover
+  - composer test -- --coverage-text --coverage-clover=coverage.clover
 
 after_script:
   - |

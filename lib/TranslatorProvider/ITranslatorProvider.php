@@ -45,8 +45,8 @@ interface ITranslatorProvider {
     /**
      * Makes Translator for preferred language
      *
-     * @param array  $langs       Languages ordered by preference
-     * @param string $defaultLang Default language
+     * @param array       $langs       Languages ordered by preference
+     * @param string|null $defaultLang Default language
      *
      * @return Translator
      */

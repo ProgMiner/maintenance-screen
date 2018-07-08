@@ -74,7 +74,7 @@ abstract class AbstractTranslatorProvider implements ITranslatorProvider {
     /**
      * {@inheritdoc}
      */
-    public function getPreferredTranslator(array $langs, $defaultLang = null): Translator {
+    public function getPreferredTranslator(array $langs, string $defaultLang = null): Translator {
         if (!is_null($defaultLang)) {
             $langs[] = $defaultLang;
         }
