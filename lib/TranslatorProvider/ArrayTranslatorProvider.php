@@ -34,25 +34,53 @@ use MaintenanceScreen\Translator;
 class ArrayTranslatorProvider extends AbstractTranslatorProvider {
 
     /**
-     * @var string[][] Array of languages and their translations (Language code => (Key => Translation))
+     * @var Translator[] Array of languages and their Translators (Language code => Translator)
      */
-    protected $languages;
+    protected $translators = [];
 
     /**
-     * @param string[][] $langs Array of languages and their translations (Language code => (Key => Translation))
+     * @param Translator[] $langs Array of Translators
      */
     public function __construct(array $langs) {
-        $this->languages = $langs;
+        foreach ($langs as $translator) {
+            if (is_a($translator, Translator::class, false)) {
+                $this->translators[$translator->getLanguage()] = $translator;
+            } else {
+                throw new \InvalidArgumentException('$langs must have Translator[] type');
+            }
+        }
     }
 
     /**
      * {@inheritdoc}
      */
     protected function _getTranslator(string $lang): Translator {
-        if (!isset($this->languages[$lang])) {
-            throw new \RuntimeException("Language \"{$lang}\" is not provided");
+        if (!isset($this->translators[$lang])) {
+            throw new \UnexpectedValueException("Translator for language \"{$lang}\" is not exists");
         }
 
-        return new Translator($this->languages[$lang], $lang);
+        return $this->translators[$lang];
+    }
+
+    /**
+     * Makes {@see ArrayTranslatorProvider}
+     * from array of arrays with strings
+     *
+     * @param string[][] $arrays Array of arrays with translations (Language code => (Key => Translation))
+     *
+     * @return ArrayTranslatorProvider
+     */
+    public static function fromArrays(array $arrays): ArrayTranslatorProvider {
+        $ret = new static([]);
+
+        foreach ($arrays as $lang => $translations) {
+            if (is_array($translations)) {
+                $ret->translators[$lang] = new Translator($translations, $lang);
+            } else {
+                throw new \InvalidArgumentException('$arrays must have string[][] type');
+            }
+        }
+
+        return $ret;
     }
 }

@@ -82,7 +82,7 @@ class MaintenanceScreen {
      *
      * @return Response Rendered maintenance screen
      */
-    public function render(Request $request = null): Response {
+    public function render(?Request $request = null): Response {
         $request = self::validateRequest($request);
 
         $translator = $this->translatorProvider->getPreferredTranslator(
@@ -112,7 +112,7 @@ class MaintenanceScreen {
      *
      * @param Request|null $request Request for rendering
      */
-    public function send(Request $request = null) {
+    public function send(?Request $request = null) {
         $request = self::validateRequest($request);
 
         $this->
@@ -121,7 +121,7 @@ class MaintenanceScreen {
             send();
     }
 
-    protected static function validateRequest(Request $request = null): Request {
+    protected static function validateRequest(?Request $request): Request {
         if (is_null($request)) {
             return Request::createFromGlobals();
         }

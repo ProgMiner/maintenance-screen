@@ -73,7 +73,7 @@ class TranslatorTest extends TestCase {
         );
     }
 
-    public function testCanNotTranslate() {
+    public function testCannotTranslateUnknownKey() {
         $key = 'Key_'.rand();
 
         $translator = new Translator([], '');

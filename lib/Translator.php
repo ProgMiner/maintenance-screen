@@ -46,13 +46,15 @@ class Translator {
     protected $language;
 
     /**
-     * @param array  $translations Translations (Key => Translation)
-     * @param string $language     Language name
+     * @param string[] $translations Translations (Key => Translation)
+     * @param string   $language     Language name
      */
     public function __construct(array $translations, string $language) {
         foreach ($translations as $key => $value) {
-            if (is_string($key) && is_string($value)) {
+            if (is_string($value)) {
                 $this->translations[$key] = $value;
+            } else {
+                throw new \InvalidArgumentException('$translations must have string[] type');
             }
         }
 

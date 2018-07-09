@@ -34,7 +34,10 @@ use MaintenanceScreen\Translator;
 abstract class AbstractTranslatorProvider implements ITranslatorProvider {
 
     /**
-     * Makes Translator for language
+     * Makes Translator for language.
+     *
+     * All arguments of {@see ITranslatorProvider::getTranslator}
+     * will be received to this function.
      *
      * @param string $lang Language name
      *
@@ -74,7 +77,7 @@ abstract class AbstractTranslatorProvider implements ITranslatorProvider {
     /**
      * {@inheritdoc}
      */
-    public function getPreferredTranslator(array $langs, string $defaultLang = null): Translator {
+    public function getPreferredTranslator(array $langs, ?string $defaultLang = null): Translator {
         if (!is_null($defaultLang)) {
             $langs[] = $defaultLang;
         }

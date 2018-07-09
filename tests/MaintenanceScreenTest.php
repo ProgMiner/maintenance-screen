@@ -80,7 +80,7 @@ class MaintenanceScreenTest extends TestCase {
             'template_name'    => 'Template_'.rand()
         ];
 
-        return new MaintenanceScreen($config, new ArrayTranslatorProvider([
+        return new MaintenanceScreen($config, ArrayTranslatorProvider::fromArrays([
             $config['default_language'] => ['content' => 'Test']
         ]), new CallableTemplateRenderer([
             $config['template_name'] => function($vars) { echo $vars['content']; }

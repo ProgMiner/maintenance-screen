@@ -26,6 +26,8 @@ use PHPUnit\Framework\TestCase;
 
 use Symfony\Component\Config\Loader\Loader;
 
+use \Symfony\Component\Config\Exception\FileLoaderLoadException;
+
 use MaintenanceScreen\FileLoader\YamlFileLoader;
 use MaintenanceScreen\ConfigurationLoader;
 
@@ -39,22 +41,21 @@ class ConfigurationLoaderTest extends TestCase {
      * @expectedException \Throwable
      */
     public function testCanHaveOnlyLoaders() {
-        new ConfigurationLoader([(object) []]);
+        new ConfigurationLoader(['']);
     }
 
     public function testCanUseCustomFileLoaders() {
         $loader = new ConfigurationLoader([new CustomLoader1()]);
 
-        $this->assertEquals($loader->load('ABCD'), 'ABCD');
+        $test = 'Test_'.rand();
+        $this->assertEquals($loader->load($test), $test);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Config\Exception\FileLoaderLoadException
-     */
     public function testThrowsExceptionIfCanNotLoadConfig() {
         $loader = new ConfigurationLoader([new CustomLoader2()]);
 
-        $loader->load('ABCD');
+        $this->expectException(FileLoaderLoadException::class);
+        $loader->load('Test');
     }
 }
 

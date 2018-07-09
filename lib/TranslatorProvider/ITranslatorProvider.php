@@ -50,5 +50,5 @@ interface ITranslatorProvider {
      *
      * @return Translator
      */
-    public function getPreferredTranslator(array $langs, string $defaultLang = null): Translator;
+    public function getPreferredTranslator(array $langs, ?string $defaultLang = null): Translator;
 }
