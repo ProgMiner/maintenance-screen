@@ -41,20 +41,29 @@ class YamlFileLoaderTest extends TestCase {
 
         $this->assertNull($loader->load('Test.txt'));
         $this->assertNull($loader->load('Test'));
+
+        $this->expectException(\Throwable::class);
+        $loader->load(rand().'.yaml');
     }
 
     public function testSupportsWorks() {
         $loader = new YamlFileLoader(new FileLocator(__DIR__.'/../Resources/FileLoader/YamlFileLoader/'));
 
+        // Test is_string
         $this->assertFalse($loader->supports((object) []));
 
+        // Test in_array(pathinfo)
         $this->assertTrue($loader->supports('Test.yaml'));
         $this->assertTrue($loader->supports('Test.yml'));
 
         $this->assertFalse($loader->supports('Test.txt'));
         $this->assertFalse($loader->supports('Test'));
 
-        $this->assertTrue($loader->supports(rand().'.yaml'));
-        $this->assertTrue($loader->supports(rand().'.yml'));
+        // Test $type === 'yaml'
+        $this->assertTrue($loader->supports('Test.yaml', 'yaml'));
+        $this->assertTrue($loader->supports('Test.yml', 'yaml'));
+
+        $this->assertFalse($loader->supports('Test.yaml', 'txt'));
+        $this->assertFalse($loader->supports('Test.yml', ''));
     }
 }

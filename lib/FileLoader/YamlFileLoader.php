@@ -48,15 +48,8 @@ class YamlFileLoader extends FileLoader {
      * {@inheritdoc}
      */
     public function supports($resource, $type = null) {
-        if (!is_string($resource)) {
-            return false;
-        }
-
-        $ext = pathinfo($resource, PATHINFO_EXTENSION);
-
-        return (
-            $ext === 'yaml' ||
-            $ext === 'yml'
-        );
+        return is_string($resource) &&
+               in_array(pathinfo($resource, PATHINFO_EXTENSION), ['yml', 'yaml'], true) &&
+               (is_null($type) || $type === 'yaml');
     }
 }
