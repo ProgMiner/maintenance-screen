@@ -61,6 +61,6 @@ class ConfigurationTranslatorProvider extends AbstractTranslatorProvider {
     protected function _getTranslator(string $lang, string $suffix = '.yml', string $prefix = ''): Translator {
         $name = $prefix.$lang.$suffix;
 
-        return Translator::fromConfig($this->configLoader->load($name), $lang);
+        return Translator::fromConfig((array) $this->configLoader->load($name), $lang);
     }
 }

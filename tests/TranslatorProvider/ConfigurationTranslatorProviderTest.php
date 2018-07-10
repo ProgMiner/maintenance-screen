@@ -26,47 +26,41 @@ use PHPUnit\Framework\TestCase;
 
 use Symfony\Component\Config\Loader\Loader;
 
-use Symfony\Component\Config\Exception\FileLoaderLoadException;
+use MaintenanceScreen\TranslatorProvider\ConfigurationTranslatorProvider;
 
-use MaintenanceScreen\FileLoader\YamlFileLoader;
 use MaintenanceScreen\ConfigurationLoader;
+use MaintenanceScreen\Translator;
 
-class ConfigurationLoaderTest extends TestCase {
+class ConfigurationTranslatorProviderTest extends TestCase {
 
-    public function testCanHaveNotLoaders() {
-        $this->assertInstanceOf(ConfigurationLoader::class, new ConfigurationLoader([]));
-    }
+    public function testAddsPrefixAndSuffixToLanguageName() {
+        $language = 'Language_'.rand();
+        $prefix = 'Prefix_'.rand();
+        $suffix = 'Suffix_'.rand();
 
-    /**
-     * @expectedException \Throwable
-     */
-    public function testCanHaveOnlyLoaders() {
-        new ConfigurationLoader(['']);
-    }
+        $this->assertInstanceOf(
+            ConfigurationTranslatorProvider::class,
+            $provider = new ConfigurationTranslatorProvider(
+                new ConfigurationLoader([new CustomLoader()])
+            )
+        );
 
-    public function testCanUseCustomFileLoaders() {
-        $loader = new ConfigurationLoader([new CustomLoader1()]);
+        $translator = $provider->getTranslator($language, $suffix, $prefix);
 
-        $test = 'Test_'.rand();
-        $this->assertEquals($loader->load($test), $test);
-    }
+        $this->assertEquals(
+            $translator->getLanguage(),
+            $language
+        );
 
-    public function testThrowsExceptionIfCanNotLoadConfig() {
-        $loader = new ConfigurationLoader([new CustomLoader2()]);
-
-        $this->expectException(FileLoaderLoadException::class);
-        $loader->load('Test');
+        $this->assertEquals(
+            $translator->translate('name'),
+            $prefix.$language.$suffix
+        );
     }
 }
 
-class CustomLoader1 extends Loader {
+class CustomLoader extends Loader {
 
-    public function load($resource, $type = null) { return $resource; }
+    public function load($resource, $type = null) { return ['name' => ['text' => $resource]]; }
     public function supports($resource, $type = null) { return true; }
-}
-
-class CustomLoader2 extends Loader {
-
-    public function load($resource, $type = null) { throw new Exception($resource); }
-    public function supports($resource, $type = null) { return false; }
 }
