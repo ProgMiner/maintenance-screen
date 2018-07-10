@@ -43,7 +43,10 @@ interface ITranslatorProvider {
     public function getTranslator(string $lang): Translator;
 
     /**
-     * Makes Translator for preferred language
+     * Makes Translator for preferred language.
+     *
+     * All not required arguments will be passed
+     * to {@see ITranslatorProvider::getTranslator}.
      *
      * @param array       $langs       Languages ordered by preference
      * @param string|null $defaultLang Default language

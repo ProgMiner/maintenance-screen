@@ -36,8 +36,8 @@ abstract class AbstractTranslatorProvider implements ITranslatorProvider {
     /**
      * Makes Translator for language.
      *
-     * All arguments of {@see ITranslatorProvider::getTranslator}
-     * will be received to this function.
+     * All {@see ITranslatorProvider::getTranslator}
+     * arguments will be passed to this function.
      *
      * @param string $lang Language name
      *
@@ -60,7 +60,7 @@ abstract class AbstractTranslatorProvider implements ITranslatorProvider {
         }
 
         // If $lang is includes country code, try call self only for language code
-        if (false !== ($pos = strpos($lang, '_'))) {
+        if (($pos = strpos($lang, '_')) !== false) {
             try {
                 array_shift($args);
                 array_unshift($args, substr($lang, 0, $pos));
@@ -96,6 +96,6 @@ abstract class AbstractTranslatorProvider implements ITranslatorProvider {
             }
         }
 
-        throw new \RuntimeException('No one language exists');
+        throw new \Exception('No one language exists');
     }
 }
