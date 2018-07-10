@@ -9,12 +9,6 @@
 
 The "Maintenance mode" screen library
 
-- [Install](#install)
-- [Usage](#usage)
-  - [Example](#example)
-- [Documentation](#documentation)
-- [Todo](#todo)
-
 ## Install
 
 Via Composer
