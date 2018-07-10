@@ -27,63 +27,61 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
 use MaintenanceScreen\MaintenanceScreen;
+use MaintenanceScreen\Translator;
+
 use MaintenanceScreen\TranslatorProvider\ArrayTranslatorProvider;
 
 use ProgMinerUtils\TemplateRenderer\CallableTemplateRenderer;
 
 class MaintenanceScreenTest extends TestCase {
 
-    public function testEmptyInstanceCanBeCreatedButCannotBeRendered() {
+    public function testWorks() {
+        $config = [
+            'default_language' => 'Language_'.rand(),
+            'template_name'    => 'Template_'.rand()
+        ];
+
+        $maintenanceScreen = new MaintenanceScreen($config, ArrayTranslatorProvider::fromArrays([
+            $config['default_language'] => ['content' => 'Test']
+        ]), new CallableTemplateRenderer([
+            $config['template_name'] => function($vars) { echo $vars['content']; }
+        ]));
+
+        $this->assertTrue(
+            strpos(trim($maintenanceScreen->render()->getContent()), 'Test') === 0
+        );
+
+        $this->assertTrue(
+            strpos(trim($maintenanceScreen->render(new Request())->getContent()), 'Test') === 0
+        );
+
+        $this->expectOutputRegex('/^Test/');
+        $maintenanceScreen->send();
+    }
+
+    public function testNotWorksIfHaveNotTranslations() {
         $this->assertInstanceOf(
             MaintenanceScreen::class,
-            $maintenanceScreen = new MaintenanceScreen([], new ArrayTranslatorProvider([]), new CallableTemplateRenderer([]))
+            $maintenanceScreen = new MaintenanceScreen([
+                'default_language' => 'Test',
+                'template_name'    => 'Test'
+            ], new ArrayTranslatorProvider([]), new CallableTemplateRenderer(['Test' => function() {}]))
         );
 
         $this->expectException(\Throwable::class);
         $maintenanceScreen->render();
     }
 
-    public function testCanBeRendered() {
-        $maintenanceScreen = $this->constructMaintenanceScreen();
-
-        $this->assertTrue(
-            strpos(trim($maintenanceScreen->render()->getContent()), 'Test') === 0
+    public function testNotWorksIfHaveNotTemplates() {
+        $this->assertInstanceOf(
+            MaintenanceScreen::class,
+            $maintenanceScreen = new MaintenanceScreen([
+                'default_language' => 'Test',
+                'template_name'    => 'Test'
+            ], new ArrayTranslatorProvider([new Translator([], 'Test')]), new CallableTemplateRenderer([]))
         );
-    }
 
-    public function testCanBeRenderedWithCustomRequest() {
-        $maintenanceScreen = $this->constructMaintenanceScreen();
-
-        $this->assertTrue(
-            strpos(trim($maintenanceScreen->render(new Request())->getContent()), 'Test') === 0
-        );
-    }
-
-    public function testCanBeSended() {
-        $maintenanceScreen = $this->constructMaintenanceScreen();
-
-        ob_start();
-
-        $maintenanceScreen->send();
-
-        $sended = ob_get_contents();
-        ob_end_clean();
-
-        $this->assertTrue(
-            strpos(trim($sended), 'Test') === 0
-        );
-    }
-
-    protected function constructMaintenanceScreen(): MaintenanceScreen {
-        $config = [
-            'default_language' => 'Language_'.rand(),
-            'template_name'    => 'Template_'.rand()
-        ];
-
-        return new MaintenanceScreen($config, ArrayTranslatorProvider::fromArrays([
-            $config['default_language'] => ['content' => 'Test']
-        ]), new CallableTemplateRenderer([
-            $config['template_name'] => function($vars) { echo $vars['content']; }
-        ]));
+        $this->expectException(\Throwable::class);
+        $maintenanceScreen->render();
     }
 }
