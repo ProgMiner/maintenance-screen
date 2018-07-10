@@ -21,11 +21,11 @@ For using some included classes you also need to install more requrements:
 
 - For `MaintenanceScreen\FileLoader\YamlFileLoader` - [Symfony Yaml](http://symfony.com/doc/current/components/yaml):
 ```bash
-composer require symfony/yaml ^4.0
+$ composer require symfony/yaml ^4.0
 ```
 - For `ProgMinerUtils\TemplateRenderer\TwigTemplateRenderer` - [Twig](https://twig.symfony.com/):
 ```bash
-composer require twig/twig ^2.4
+$ composer require twig/twig ^2.4
 ```
 
 ## Usage
