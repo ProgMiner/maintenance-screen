@@ -28,7 +28,6 @@ use Symfony\Component\Config\Loader\Loader;
 
 use Symfony\Component\Config\Exception\FileLoaderLoadException;
 
-use MaintenanceScreen\FileLoader\YamlFileLoader;
 use MaintenanceScreen\ConfigurationLoader;
 
 class ConfigurationLoaderTest extends TestCase {
@@ -45,27 +44,27 @@ class ConfigurationLoaderTest extends TestCase {
     }
 
     public function testCanUseCustomFileLoaders() {
-        $loader = new ConfigurationLoader([new CustomLoader1()]);
+        $loader = new ConfigurationLoader([new ConfigurationLoaderTest_CustomLoader1()]);
 
         $test = 'Test_'.rand();
         $this->assertEquals($loader->load($test), $test);
     }
 
     public function testThrowsExceptionIfCanNotLoadConfig() {
-        $loader = new ConfigurationLoader([new CustomLoader2()]);
+        $loader = new ConfigurationLoader([new ConfigurationLoaderTest_CustomLoader2()]);
 
         $this->expectException(FileLoaderLoadException::class);
         $loader->load('Test');
     }
 }
 
-class CustomLoader1 extends Loader {
+class ConfigurationLoaderTest_CustomLoader1 extends Loader {
 
     public function load($resource, $type = null) { return $resource; }
     public function supports($resource, $type = null) { return true; }
 }
 
-class CustomLoader2 extends Loader {
+class ConfigurationLoaderTest_CustomLoader2 extends Loader {
 
     public function load($resource, $type = null) { throw new Exception($resource); }
     public function supports($resource, $type = null) { return false; }

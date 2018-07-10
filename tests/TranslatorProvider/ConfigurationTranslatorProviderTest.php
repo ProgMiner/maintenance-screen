@@ -41,7 +41,7 @@ class ConfigurationTranslatorProviderTest extends TestCase {
         $this->assertInstanceOf(
             ConfigurationTranslatorProvider::class,
             $provider = new ConfigurationTranslatorProvider(
-                new ConfigurationLoader([new CustomLoader()])
+                new ConfigurationLoader([new ConfigurationTranslatorProviderTest_CustomLoader()])
             )
         );
 
@@ -59,7 +59,7 @@ class ConfigurationTranslatorProviderTest extends TestCase {
     }
 }
 
-class CustomLoader extends Loader {
+class ConfigurationTranslatorProviderTest_CustomLoader extends Loader {
 
     public function load($resource, $type = null) { return ['name' => ['text' => $resource]]; }
     public function supports($resource, $type = null) { return true; }

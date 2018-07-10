@@ -39,18 +39,24 @@ class YamlFileLoader extends FileLoader {
      * {@inheritdoc}
      */
     public function load($resource, $type = null) {
-        return Yaml::parse(file_get_contents($resource));
+        return Yaml::parse(
+            file_get_contents($this->locator->locate($resource))
+        );
     }
 
     /**
      * {@inheritdoc}
      */
     public function supports($resource, $type = null) {
+        if (!is_string($resource)) {
+            return false;
+        }
+
         $ext = pathinfo($resource, PATHINFO_EXTENSION);
 
-        return is_string($resource) && (
-            'yaml' === $ext ||
-            'yml' === $ext
+        return (
+            $ext === 'yaml' ||
+            $ext === 'yml'
         );
     }
 }

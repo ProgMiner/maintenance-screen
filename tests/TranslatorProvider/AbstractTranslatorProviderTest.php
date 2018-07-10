@@ -34,7 +34,7 @@ class AbstractTranslatorProviderTest extends TestCase {
      * @testdox getTranslator replaces hyphens with underscores
      */
     public function testReplacesHyphensWithUnderscores() {
-        $provider = new CustomTranslatorProvider1();
+        $provider = new AbstractTranslatorProviderTest_CustomTranslatorProvider1();
 
         $this->assertEquals(
             $provider->getTranslator('-')->getLanguage(),
@@ -48,7 +48,7 @@ class AbstractTranslatorProviderTest extends TestCase {
     public function testPassesAllArgumentsToTheInternalFunction() {
         $args = ['Language_'.rand(), rand(), rand()];
 
-        $provider = new CustomTranslatorProvider1();
+        $provider = new AbstractTranslatorProviderTest_CustomTranslatorProvider1();
         $this->assertEquals(
             $provider->getTranslator(...$args)->getLanguage(),
             implode(', ', $args)
@@ -65,7 +65,7 @@ class AbstractTranslatorProviderTest extends TestCase {
         array_unshift($args1, $language.'_'.rand());
         array_unshift($args2, $language);
 
-        $provider = new CustomTranslatorProvider2();
+        $provider = new AbstractTranslatorProviderTest_CustomTranslatorProvider2();
         $this->assertEquals(
             $provider->getTranslator(...$args1)->getLanguage(),
             implode(', ', $args2)
@@ -80,7 +80,7 @@ class AbstractTranslatorProviderTest extends TestCase {
 
         $exception = new \Exception('');
         try {
-            $provider = new CustomTranslatorProvider3();
+            $provider = new AbstractTranslatorProviderTest_CustomTranslatorProvider3();
             $provider->getTranslator($language)->getLanguage();
         } catch (\Exception $e) {
             $exception = $e;
@@ -96,7 +96,7 @@ class AbstractTranslatorProviderTest extends TestCase {
      * @testdox getPreferredTranslator can receive null as default language
      */
     public function testCanReceiveNullAsDefaultLanguage() {
-        $provider = new CustomTranslatorProvider1();
+        $provider = new AbstractTranslatorProviderTest_CustomTranslatorProvider1();
 
         $this->assertEquals(
             $provider->getPreferredTranslator([''], null)->getLanguage(),
@@ -108,7 +108,7 @@ class AbstractTranslatorProviderTest extends TestCase {
      * @testdox getPreferredTranslator throw exception for empty array
      */
     public function testThrowExceptionForEmptyArray() {
-        $provider = new CustomTranslatorProvider1();
+        $provider = new AbstractTranslatorProviderTest_CustomTranslatorProvider1();
 
         $this->expectException(\Exception::class);
         $provider->getPreferredTranslator([]);
@@ -120,7 +120,7 @@ class AbstractTranslatorProviderTest extends TestCase {
     public function testAddsDefaultLanguageToLanguagesArray() {
         $language = 'Language_'.rand();
 
-        $provider = new CustomTranslatorProvider1();
+        $provider = new AbstractTranslatorProviderTest_CustomTranslatorProvider1();
         $this->assertEquals(
             $provider->getPreferredTranslator([], $language)->getLanguage(),
             $language
@@ -133,7 +133,7 @@ class AbstractTranslatorProviderTest extends TestCase {
     public function testAddsDefaultLanguageAtEndOfLanguagesArray() {
         $language = 'Language_'.rand();
 
-        $provider = new CustomTranslatorProvider1();
+        $provider = new AbstractTranslatorProviderTest_CustomTranslatorProvider1();
         $this->assertEquals(
             $provider->getPreferredTranslator([$language], '')->getLanguage(),
             $language
@@ -150,7 +150,7 @@ class AbstractTranslatorProviderTest extends TestCase {
         array_unshift($args1, [$language], null);
         array_unshift($args2, $language);
 
-        $provider = new CustomTranslatorProvider1();
+        $provider = new AbstractTranslatorProviderTest_CustomTranslatorProvider1();
         $this->assertEquals(
             $provider->getPreferredTranslator(...$args1)->getLanguage(),
             implode(', ', $args2)
@@ -161,21 +161,21 @@ class AbstractTranslatorProviderTest extends TestCase {
      * @testdox getPreferredTranslator throws an exception if no one of the provided language is not supported
      */
     public function testThrowsAnExceptionIfNoOneOfTheProvidedLanguageIsNotSupported() {
-        $provider = new CustomTranslatorProvider3();
+        $provider = new AbstractTranslatorProviderTest_CustomTranslatorProvider3();
 
         $this->expectException(\Exception::class);
         $provider->getPreferredTranslator(['Language_'.rand(), 'Language_'.rand()]);
     }
 }
 
-class CustomTranslatorProvider1 extends AbstractTranslatorProvider {
+class AbstractTranslatorProviderTest_CustomTranslatorProvider1 extends AbstractTranslatorProvider {
 
     protected function _getTranslator(string $lang): Translator {
         return new Translator([], implode(', ', func_get_args()));
     }
 }
 
-class CustomTranslatorProvider2 extends AbstractTranslatorProvider {
+class AbstractTranslatorProviderTest_CustomTranslatorProvider2 extends AbstractTranslatorProvider {
 
     protected function _getTranslator(string $lang): Translator {
         if (strpos($lang, '_') !== false) {
@@ -186,7 +186,7 @@ class CustomTranslatorProvider2 extends AbstractTranslatorProvider {
     }
 }
 
-class CustomTranslatorProvider3 extends AbstractTranslatorProvider {
+class AbstractTranslatorProviderTest_CustomTranslatorProvider3 extends AbstractTranslatorProvider {
 
     protected function _getTranslator(string $lang): Translator {
         throw new \Exception($lang);
