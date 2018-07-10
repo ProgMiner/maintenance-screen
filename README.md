@@ -25,11 +25,11 @@ $ composer require progminer/maintenance-screen
 
 For using some included classes you also need to install more requrements:
 
-- For `MaintenanceScreen\FileLoader\YamlFileLoader` perform the:
+- For `MaintenanceScreen\FileLoader\YamlFileLoader` - [Symfony Yaml](http://symfony.com/doc/current/components/yaml):
 ```bash
 composer require symfony/yaml ^4.0
 ```
-- For `ProgMinerUtils\TemplateRenderer\TwigTemplateRenderer` perform the:
+- For `ProgMinerUtils\TemplateRenderer\TwigTemplateRenderer` - [Twig](https://twig.symfony.com/):
 ```bash
 composer require twig/twig ^2.4
 ```
@@ -40,7 +40,7 @@ An instance of `MaintenanceScreen\MaintenanceScreen` consists of configurations 
 `MaintenanceScreen\TranslatorProvider\TranslatorProviderInterface` instance
 and `ProgMinerUtils\TemplateRenderer\TemplateRendererInterface` instance.
 
-This example step by step illustrates how to make a `MaintenanceScreen\MaintenanceScreen` instance:
+This example step by step illustrates how works with the `MaintenanceScreen\MaintenanceScreen`.
 
 ### Example
 
@@ -48,8 +48,8 @@ In first order you have to write uses, include a `vendor/autoload.php` (ommited)
 Also you could make configuration array for `MaintenanceScreen\MaintenanceScreen`.
 
 ```php
-use MaintenanceScreen\MaintenanceScreen;
 use MaintenanceScreen\ConfigurationLoader;
+use MaintenanceScreen\MaintenanceScreen;
 
 use MaintenanceScreen\TranslatorProvider\ArrayTranslatorProvider;
 
@@ -58,7 +58,7 @@ use ProgMinerUtils\TemplateRenderer\CallableTemplateRenderer;
 $config = [
     'template_name'    => 'Default', // template name, not required
     'default_language' => 'en',      // uses if Accept-Language is not provided, not required
-    'charset'          => 'utf-8'    // not required
+    'charset'          => 'utf-8'    // not required, charset for Response and TemplateRenderer
 ];
 ```
 
@@ -74,6 +74,8 @@ $translatorsProvider = new ArrayTranslatorProvider([
     'ru' => ['title' => 'Сайт в режиме техобслуживания', 'text' => 'Сайт в режиме техобслуживания']
 ]);
 ```
+
+Also you can create class that implements `MaintenanceScreen\TranslatorProvider\ITranslatorProvider`.
 
 Now you have to make a `ProgMinerUtils\TemplateRenderer\TemplateRendererInterface` instance,
 for example, `ProgMinerUtils\TemplateRenderer\CallableTemplateRenderer`:
@@ -96,7 +98,7 @@ $maintenanceScreen = new MaintenanceScreen($config, $translatorProvider, $templa
 ```
 
 When you have an instance of `MaintenanceScreen\MaintenanceScreen`
-you can render and/or send rendered `\Symfony\Component\HttpFoundation\Response`:
+you can render and/or send rendered `Symfony\Component\HttpFoundation\Response`:
 
 - Rendering:
 ```php
@@ -107,12 +109,8 @@ $response = $maintenanceScreen->render();
 $maintenanceScreen->send();
 ```
 
-Both methods have not required argument `$request` - instance of class `\Symfony\Component\HttpFoundation\Request`.
-If it is not provided methods calls a `\Symfony\Component\HttpFoundation\Request::createFromGlobals` method for getting current request.
-
-## Documentation
-
-Documentation is unavailable now except code commentaries.
+Both methods have not required argument `$request` - instance of class `Symfony\Component\HttpFoundation\Request`.
+If it is not provided this methods calls a `Symfony\Component\HttpFoundation\Request::createFromGlobals` method for getting current request.
 
 ## Todo
 
