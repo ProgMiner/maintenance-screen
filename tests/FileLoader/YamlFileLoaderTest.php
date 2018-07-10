@@ -46,6 +46,8 @@ class YamlFileLoaderTest extends TestCase {
     public function testSupportsWorks() {
         $loader = new YamlFileLoader(new FileLocator(__DIR__.'/../Resources/FileLoader/YamlFileLoader/'));
 
+        $this->assertFalse($loader->supports((object) []));
+
         $this->assertTrue($loader->supports('Test.yaml'));
         $this->assertTrue($loader->supports('Test.yml'));
 
