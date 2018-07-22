@@ -29,7 +29,7 @@ use MaintenanceScreen\Translator;
 /**
  * Array-based Translator instances provider
  *
- * @author ProgMiner
+ * @author Eridan Domoratskiy
  */
 class ArrayTranslatorProvider extends AbstractTranslatorProvider {
 

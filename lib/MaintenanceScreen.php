@@ -40,7 +40,7 @@ use ProgMinerUtils\TemplateRenderer\CallableTemplateRenderer;
 /**
  * Main class
  *
- * @author ProgMiner
+ * @author Eridan Domoratskiy
  */
 class MaintenanceScreen {
 

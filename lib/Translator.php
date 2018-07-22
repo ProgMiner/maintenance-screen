@@ -31,7 +31,7 @@ use MaintenanceScreen\Configurations\TranslatorConfiguration;
 /**
  * Translates to some language
  *
- * @author ProgMiner
+ * @author Eridan Domoratskiy
  */
 class Translator {
 

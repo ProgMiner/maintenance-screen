@@ -32,7 +32,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
  * ConfigurationInterface implementation for translations
  * !ONLY FOR FILES!
  *
- * @author ProgMiner
+ * @author Eridan Domoratskiy
  */
 class TranslatorConfiguration implements ConfigurationInterface {
 

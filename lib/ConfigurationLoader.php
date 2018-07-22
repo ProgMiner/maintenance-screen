@@ -31,7 +31,7 @@ use Symfony\Component\Config\Loader\DelegatingLoader;
 /**
  * Configuraion loader
  *
- * @author ProgMiner
+ * @author Eridan Domoratskiy
  */
 class ConfigurationLoader {
 

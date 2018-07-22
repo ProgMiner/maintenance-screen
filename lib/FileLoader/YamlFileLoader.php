@@ -31,7 +31,7 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Yaml configuration loader
  *
- * @author ProgMiner
+ * @author Eridan Domoratskiy
  */
 class YamlFileLoader extends FileLoader {
 

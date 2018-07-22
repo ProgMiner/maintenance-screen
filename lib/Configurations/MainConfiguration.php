@@ -31,7 +31,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 /**
  * ConfigurationInterface implementation for main configuration
  *
- * @author ProgMiner
+ * @author Eridan Domoratskiy
  */
 class MainConfiguration implements ConfigurationInterface {
 

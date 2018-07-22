@@ -30,7 +30,7 @@ use MaintenanceScreen\Translator;
 /**
  * Provides Translator instances from configs
  *
- * @author ProgMiner
+ * @author Eridan Domoratskiy
  */
 class ConfigurationTranslatorProvider extends AbstractTranslatorProvider {
 

@@ -29,7 +29,7 @@ use MaintenanceScreen\Translator;
 /**
  * Interface for Translator instances providers
  *
- * @author ProgMiner
+ * @author Eridan Domoratskiy
  */
 interface ITranslatorProvider {
 
