@@ -126,7 +126,7 @@ If you discover any security related issues, please email eridan200@mail.ru inst
 ## API Documentation
 
 This projects API documentation is built using [Sami](https://github.com/FriendsOfPHP/Sami)
-and available at http://github.io/ProgMiner/maintenance-screen/master/.
+and available at https://progminer.github.io/maintenance-screen/master/.
 
 ### Build
 
