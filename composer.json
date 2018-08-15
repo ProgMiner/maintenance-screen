@@ -36,6 +36,8 @@
         "sort-packages": true
     },
     "scripts": {
-        "test": "phpunit --testdox --disallow-todo-tests"
+        "test": "phpunit --testdox --disallow-todo-tests",
+        "install-sami": "curl -O http://get.sensiolabs.org/sami.phar",
+        "regen-docs": "@php sami.phar update sami-config.php"
     }
 }

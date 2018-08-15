@@ -14,18 +14,18 @@ The "Maintenance mode" screen library
 Via Composer
 
 ``` bash
-$ composer require progminer/maintenance-screen
+composer require progminer/maintenance-screen
 ```
 
 For using some included classes you also need to install more requrements:
 
 - For `MaintenanceScreen\FileLoader\YamlFileLoader` - [Symfony Yaml](http://symfony.com/doc/current/components/yaml):
 ```bash
-$ composer require symfony/yaml ^4.0
+composer require symfony/yaml ^4.0
 ```
 - For `ProgMinerUtils\TemplateRenderer\TwigTemplateRenderer` - [Twig](https://twig.symfony.com/):
 ```bash
-$ composer require twig/twig ^2.4
+composer require twig/twig ^2.4
 ```
 
 ## Usage
@@ -122,6 +122,34 @@ If you discover any security related issues, please email eridan200@mail.ru inst
 
 - [Eridan Domoratskiy][link-author]
 - [All Contributors][link-contributors]
+
+## API Documentation
+
+This projects API documentation is built using [Sami](https://github.com/FriendsOfPHP/Sami)
+and available at http://github.io/ProgMiner/maintenance-screen/master/.
+
+### Build
+
+In order to build the documentation first get Sami as a phar file:
+```bash
+# curl -O http://get.sensiolabs.org/sami.phar
+composer install-sami
+```
+
+Next build the documentation:
+```bash
+# php sami.phar update sami-config.php
+composer regen-docs
+```
+
+The API Documentation will be generated into the [`docs`](docs/) folder.
+If you would like to preview it locally you can easily do so
+with the built-in PHP server:
+```bash
+php -S 127.0.0.1:3000 -t docs
+```
+
+Then visit http://localhost:3000/master/ to view.
 
 ## License
 

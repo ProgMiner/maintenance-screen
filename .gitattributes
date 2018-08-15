@@ -5,3 +5,4 @@
 /.scrutinizer.yml   export-ignore
 /tests              export-ignore
 /docs               export-ignore
+/sami-config.php    export-ignore
